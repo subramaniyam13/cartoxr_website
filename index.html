@@ -1,0 +1,354 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CartoXR — Immersive Geospatial Intelligence</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="images/Logo.png" />
+  <style>
+    :root{
+      --bg:#050507;
+      --muted:#9CA3AF;
+      --card:#0f1720;
+      --teal-start:#06b6d4;
+      --teal-end:#14b8a6;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: #e6eef2; font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+    .accent-text { background: linear-gradient(90deg,var(--teal-start),var(--teal-end)); -webkit-background-clip: text; color: transparent; }
+    .card-border { border: 1px solid rgba(20,24,28,0.6); box-shadow: 0 6px 18px rgba(2,6,23,0.6); }
+    .h-scroll { -webkit-overflow-scrolling: touch; overflow-x:auto; overflow-y:hidden; scroll-behavior:smooth; }
+    /* hide default scrollbar but keep scroll */
+    .h-scroll::-webkit-scrollbar { height: 8px; }
+    .h-scroll::-webkit-scrollbar-thumb { background: linear-gradient(90deg,var(--teal-start),var(--teal-end)); border-radius:999px; }
+    /* Media modal styles */
+    .modal-backdrop { background: rgba(0,0,0,0.86); backdrop-filter: blur(6px); }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="fixed w-full z-50 top-0 left-0 bg-black/60 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-6 md:px-10 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <!-- larger logo -->
+        <img src="images/Logo.png" alt="CartoXR Logo" class="h-16 md:h-20 object-contain" />
+        <div>
+          <div class="text-white font-semibold text-lg">Carto<span class="text-teal-400">XR</span></div>
+          <div class="text-xs text-gray-400">Immersive Geospatial Intelligence</div>
+        </div>
+      </div>
+
+      <div class="hidden md:flex items-center gap-6 text-sm text-gray-300">
+        <a href="#about" class="hover:text-teal-300 transition">About</a>
+        <a href="#projects" class="hover:text-teal-300 transition">Projects</a>
+        <a href="#publications" class="hover:text-teal-300 transition">Publications</a>
+        <a href="#workshops" class="hover:text-teal-300 transition">Workshops</a>
+        <a href="#media" class="hover:text-teal-300 transition">Media</a>
+        <a href="#team" class="hover:text-teal-300 transition">Meet Our Team</a>
+        <a href="#contact" class="hover:text-teal-300 transition">Contact</a>
+      </div>
+
+      <div class="md:hidden text-gray-300">☰</div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="min-h-screen flex items-center justify-center text-center px-6 pt-20">
+    <div class="max-w-4xl">
+      <img src="images/Logo.png" alt="CartoXR" class="mx-auto h-28 md:h-36 mb-6 transition-transform transform-gpu" />
+      <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-4 accent-text">Blending Geospatial Intelligence with Immersive Technologies</h1>
+      <p class="text-gray-300 max-w-3xl mx-auto mb-6">
+        “To make immersive GIS accessible to all — empowering industries, researchers, and learners with interactive geospatial visualization and spatial analytics in AR/VR environments.”
+      </p>
+      <div class="flex items-center justify-center gap-4">
+        <a href="#projects" class="px-5 py-3 rounded-full bg-gradient-to-r from-[#06b6d4] to-[#14b8a6] text-black font-semibold shadow-md hover:scale-105 transition">View Our Work</a>
+        <a href="CartoXR_Brochure.pdf" download class="px-5 py-3 rounded-full border border-gray-700 text-gray-200 hover:border-teal-400 transition">📄 Download Brochure</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ABOUT -->
+  <section id="about" class="py-16">
+    <div class="max-w-6xl mx-auto px-6">
+      <h2 class="text-2xl md:text-3xl font-semibold text-center mb-4 accent-text">About CartoXR</h2>
+      <p class="text-center text-gray-300 max-w-4xl mx-auto">
+        CartoXR pioneers the fusion of Geoinformatics and Extended Reality (XR). We design and deliver immersive solutions — UAV mapping, AR indoor navigation, VR visualization, and XR-enabled spatial analytics — for industry, government, and academia. Our approach combines rigorous geospatial methods with practical immersive UX to accelerate decision-making and training.
+      </p>
+    </div>
+  </section>
+
+  <!-- PROJECTS (horizontal scroll) -->
+  <section id="projects" class="py-10 bg-gray-900/40">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl md:text-3xl font-semibold accent-text">Projects</h2>
+        <div class="text-sm text-gray-400">Scroll →</div>
+      </div>
+
+      <div class="h-scroll gap-6 flex items-stretch py-4">
+        <!-- card example repeated for each project; update thumbnails accordingly -->
+        <article class="min-w-[320px] max-w-[320px] bg-[#071023] rounded-2xl card-border p-4 mr-4">
+          <img src="images/UAV1.png" alt="UAV Mapping" class="rounded-xl mb-3 w-full h-40 object-cover" />
+          <h3 class="font-semibold text-lg">UAV Survey & Mapping</h3>
+          <p class="text-sm text-gray-400 mt-2">High-resolution aerial data acquisition, precision mapping, rapid deployment for emergency response. Case Study: 2023 Chennai floods (Bajaj Allianz).</p>
+        </article>
+
+        <article class="min-w-[320px] max-w-[320px] bg-[#071023] rounded-2xl card-border p-4 mr-4">
+          <img src="images/ARnav1.png" alt="AR Indoor Nav" class="rounded-xl mb-3 w-full h-40 object-cover" />
+          <h3 class="font-semibold text-lg">AR-based Indoor Navigation</h3>
+          <p class="text-sm text-gray-400 mt-2">AR indoor navigation module using Unity as Library for Android & iOS integration. (LTI Mindtree)</p>
+        </article>
+
+        <article class="min-w-[320px] max-w-[320px] bg-[#071023] rounded-2xl card-border p-4 mr-4">
+          <img src="images/STORY1.png" alt="VR Storytelling" class="rounded-xl mb-3 w-full h-40 object-cover" />
+          <h3 class="font-semibold text-lg">VR-based Storytelling</h3>
+          <p class="text-sm text-gray-400 mt-2">Immersive VR storytelling experience — history-focused narrative and environment design.</p>
+        </article>
+     
+       
+      </div>
+    </div>
+  </section>
+
+  <!-- PUBLICATIONS & PATENTS -->
+  <section id="publications" class="py-12">
+    <div class="max-w-6xl mx-auto px-6">
+      <h2 class="text-2xl md:text-3xl font-semibold mb-6 accent-text">Publications & Patents</h2>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="bg-[#071226] rounded-2xl p-6 card-border">
+          <h3 class="font-semibold text-lg mb-3">Patents</h3>
+          <ul class="text-gray-300 list-disc pl-5 space-y-2 text-sm">
+            <li><b>SYSTEM AND METHOD FOR CREATING AND EDITING THREE-DIMENSIONAL SPATIAL VECTOR DATA IN VIRTUAL REALITY ENVIRONMENT</b></li>
+            <li><b>SYSTEM AND METHOD FOR MEASUREMENTS ON A 3D REAL-WORLD RECONSTRUCTED MODEL IN AN IMMERSIVE VIRTUAL ENVIRONMENT</b></li>
+          </ul>
+        </div>
+
+        <div class="bg-[#071226] rounded-2xl p-6 card-border">
+          <h3 class="font-semibold text-lg mb-3">Selected Publications (2021–2024)</h3>
+          <ul class="text-gray-300 list-disc pl-5 space-y-2 text-sm">
+            <li>Subramaniyam, B., Shylesh, D., Ramasamy, J., & Kumar, N. — <i>A Virtual Reality Tool for Accuracy Assessment of 3D Models in an Immersive Virtual Environment</i>, ISPRS Ann. Photogramm. Remote Sens. Spatial Inf. Sci., X-4-2024, 333–340. DOI: <a class="text-teal-300" href="https://doi.org/10.5194/isprs-annals-X-4-2024-333-2024" target="_blank">10.5194/...</a></li>
+
+            <li>S Bala Subramaniyam, Reshma Raskar-Phule — <i>Real-time Computation of Precipitable Water Vapor from GPS Data</i>, in <b>GNSS Applications in Earth and Space Observations</b>, Taylor & Francis. DOI: <a class="text-teal-300" href="https://doi.org/10.1201/9781032712444-18" target="_blank">10.1201/...</a></li>
+
+            <li>Subramaniyam, S. B., & Sabirul, S. (2024). <i>Mapping and analyzing air pollution using Google Earth Engine of Thiruvananthapuram City</i>. In Disaster risk, resilient agriculture and livelihood. Routledge India.</li>
+
+            <li>S Bala Subramaniyam, Reshma Raskar-Phule — <i>Planning and Mapping of a Multi Modal Integrated Transportation System for Metro Station at Dadar, Mumbai India</i>, Journal of Civil Engineering Inter Disciplinaries 2(2):7-17, Apr 2021.</li>
+
+            <li>Richard D’Silva, S Bala Subramaniyam, Reshma Raskar-Phule — <i>Assessing Urban Water Stream Pollution by Using Geospatial Technologies</i> — (book chapter submitted to CRC Press, Taylor & Francis).</li>
+
+            <li>Jaganathan, R., Shylesh D. S., & John, J. (2022). <i>A localized counter-based filtering approach for generating digital terrain model</i>, Geocarto International, 37(26), 13229–13247. DOI: <a class="text-teal-300" href="https://doi.org/10.1080/10106049.2022.2076920" target="_blank">10.1080/...</a></li>
+
+            <li>John, J., Jaganathan, R., Dharshan Shylesh, D.S. (2021). <i>Mapping of Soil Moisture Index Using Optical and Thermal Remote Sensing</i>. In: SECON’21. Lecture Notes in Civil Engineering, vol 171. DOI: <a class="text-teal-300" href="https://doi.org/10.1007/978-3-030-80312-4_65" target="_blank">10.1007/...</a></li>
+
+            <li>Applied Geomatics (2023) — Influence of GCPs on UAV positional accuracy. (D. S. et al.) DOI: <a class="text-teal-300" href="https://doi.org/10.1007/s12518-023-00531-w" target="_blank">10.1007/...</a></li>
+
+            <li>Several 2024 journal articles on land use transformation, groundwater quality and LST interactions — see full CV for details.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mt-6 text-sm text-gray-400">
+        <b>Awards & Conference highlights:</b>
+        <ul class="list-disc pl-5 mt-2">
+          <li>Best Poster — ISG-ISRS National Symposium, Pune (Nov 2023).</li>
+          <li>Second Prize — DST Geo-Innovation Challenge (Anna University) — Extended Reality as a tool to visualize natural ecosystems (Jul 2024).</li>
+          <li>Presented at ISPRS TC IV Symposium — Fremantle, Perth, Australia (Oct 2024) — TIF Grant Awardee.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORKSHOPS (horizontal scroll) -->
+  <section id="workshops" class="py-12 bg-gray-900/30">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl md:text-3xl font-semibold accent-text">Workshops & Training</h2>
+        <div class="text-sm text-gray-400">Scroll →</div>
+      </div>
+
+      <div class="h-scroll gap-6 flex items-stretch py-4">
+        <!-- Use the image list and actual workshop text the user provided -->
+        <article class="min-w-[320px] max-w-[320px] bg-[#071226] rounded-2xl p-4 card-border mr-4">
+          <img src="images/workshop_iist1.png" alt="IIST" class="rounded-xl mb-3 w-full h-40 object-cover" />
+          <h3 class="font-semibold">Geospatial Analysis through XR</h3>
+          <p class="text-sm text-gray-400 mt-2">Indian Institute of Space Science and Technology (IIST), Trivandrum — April 24–25, 2025. Unity, Cesium & Mapbox hands-on.</p>
+        </article>
+
+        <article class="min-w-[320px] max-w-[320px] bg-[#071226] rounded-2xl p-4 card-border mr-4">
+          <img src="images/workshop_SPCE.png" alt="SPCE" class="rounded-xl mb-3 w-full h-40 object-cover" />
+          <h3 class="font-semibold">Google Earth — Sustainable Urban Infrastructure</h3>
+          <p class="text-sm text-gray-400 mt-2">Sardar Patel College of Engineering — AICTE-ATAL program talk on Urban Infrastructure, Sustainability & Climate Change — May 2025.</p>
+        </article>
+
+        <article class="min-w-[320px] max-w-[320px] bg-[#071226] rounded-2xl p-4 card-border mr-4">
+          <img src="images/WORKSHOP_bvp.png" alt="BVP" class="rounded-xl mb-3 w-full h-40 object-cover" />
+          <h3 class="font-semibold">Extended Reality & Geoinformatics</h3>
+          <p class="text-sm text-gray-400 mt-2">Bharati Vidyapeeth (Deemed University) Institute of Environment Education & Research, Pune — Sep 2024.</p>
+        </article>
+
+        <article class="min-w-[320px] max-w-[320px] bg-[#071226] rounded-2xl p-4 card-border mr-4">
+          <img src="images/workshop_SPCE_2.png" alt="QGIS Anna University" class="rounded-xl mb-3 w-full h-40 object-cover" />
+          <h3 class="font-semibold">QGIS Workshop — Anna University</h3>
+          <p class="text-sm text-gray-400 mt-2">One-week QGIS training for land record managers, urban planners & water resource officials — June 2024.</p>
+        </article>
+
+        <article class="min-w-[320px] max-w-[320px] bg-[#071226] rounded-2xl p-4 card-border">
+          <img src="images/WORKSHOP1.png" alt="SIMATS" class="rounded-xl mb-3 w-full h-40 object-cover" />
+          <h3 class="font-semibold">Immersive Engineering — SIMATS</h3>
+          <p class="text-sm text-gray-400 mt-2">"IMMERSIVE ENGINEERING: A HANDS-ON INTRODUCTION TO VIRTUAL REALITY" — Feb 2025.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- VISUALISING OUR IMPACT (photos + videos thumbnails) -->
+  <section id="media" class="py-12">
+    <div class="max-w-6xl mx-auto px-6">
+      <h2 class="text-2xl md:text-3xl font-semibold accent-text mb-6">Our Work in Action</h2>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <!-- Clickable thumbnail to open modal playing video -->
+        <div class="relative cursor-pointer group" onclick="openVideoModal('2_AR_Utility_Mapping.mp4','images/ARnav2.png')">
+          <img src="images/ARnav2.png" alt="AR Utility Mapping" class="rounded-xl w-full h-56 object-cover group-hover:opacity-70 transition" />
+          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div class="rounded-full bg-white/90 p-3 text-black text-xl">▶</div>
+          </div>
+        </div>
+
+        <div class="relative cursor-pointer group" onclick="openVideoModal('3_AR_Satellite_data.mp4','images/UAV2.png')">
+          <img src="images/UAV2.png" alt="AR Satellite" class="rounded-xl w-full h-56 object-cover group-hover:opacity-70 transition" />
+          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div class="rounded-full bg-white/90 p-3 text-black text-xl">▶</div>
+          </div>
+        </div>
+
+        <div class="relative cursor-pointer group" onclick="openVideoModal('volume_calc_vr.mp4','images/uav_me_dharshan.png')">
+          <img src="images/uav_me_dharshan.png" alt="VR Volume Calculation" class="rounded-xl w-full h-56 object-cover group-hover:opacity-70 transition" />
+          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div class="rounded-full bg-white/90 p-3 text-black text-xl">▶</div>
+          </div>
+        </div>
+
+        <div class="relative cursor-pointer group" onclick="openVideoModal('measuring_linefeature_VR.mp4','images/team1.png')">
+          <img src="images/team1.png" alt="Measuring Line Feature in VR" class="rounded-xl w-full h-56 object-cover group-hover:opacity-70 transition" />
+          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div class="rounded-full bg-white/90 p-3 text-black text-xl">▶</div>
+          </div>
+        </div>
+
+        <!-- image-only thumbnails -->
+        <img src="images/bajaj.png" alt="Client: Bajaj" class="rounded-xl w-full h-56 object-cover" />
+        <img src="images/UAV3.jpg" alt="UAV3" class="rounded-xl w-full h-56 object-cover" />
+      </div>
+
+      <div class="mt-6 text-sm text-gray-400">Tip: click any thumbnail to open the video.</div>
+    </div>
+  </section>
+
+  <!-- VIDEO MODAL -->
+  <div id="videoModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
+    <div class="max-w-4xl w-full px-4">
+      <div class="relative bg-[#071226] rounded-2xl overflow-hidden">
+        <button onclick="closeVideoModal()" class="absolute right-3 top-3 z-50 text-gray-200 text-2xl">✕</button>
+        <video id="modal-player" controls playsinline class="w-full h-[60vh] bg-black object-contain">
+          <source id="modalSource" src="" type="video/mp4" />
+          Your browser does not support video.
+        </video>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEET OUR TEAM -->
+  <section id="team" class="py-12 bg-gray-900/30">
+    <div class="max-w-6xl mx-auto px-6">
+      <h2 class="text-2xl md:text-3xl font-semibold accent-text mb-6">Meet Our Team</h2>
+
+      <div class="h-scroll gap-6 flex items-stretch py-4">
+        <div class="min-w-[300px] max-w-[300px] bg-[#071226] rounded-2xl p-6 card-border mr-4 text-center">
+          <img src="images/bala.png" alt="Bala" class="w-28 h-28 object-cover rounded-full mx-auto mb-4" />
+          <h3 class="font-semibold text-lg">S. Bala Subramaniyam</h3>
+          <p class="text-sm text-gray-300 mt-1">XR Developer | GIS Specialist | Co-Founder, CartoXR</p>
+          <p class="text-sm text-gray-400 mt-3">Merging Geospatial Intelligence with Immersive Technologies. Expertise in AR/VR, GEE, QGIS and GIS pipelines.</p>
+        </div>
+
+        <div class="min-w-[300px] max-w-[300px] bg-[#071226] rounded-2xl p-6 card-border mr-4 text-center">
+          <img src="images/Dharshan.jpg" alt="Dharshan" class="w-28 h-28 object-cover rounded-full mx-auto mb-4" />
+          <h3 class="font-semibold text-lg">Dharshan Shylesh</h3>
+          <p class="text-sm text-gray-300 mt-1">XR Developer | Researcher | Co-Founder, CartoXR</p>
+          <p class="text-sm text-gray-400 mt-3">Works on immersive visualisation of remote sensing & 3D model accuracy assessment inside VR environments.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="py-12">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <h2 class="text-2xl md:text-3xl font-semibold accent-text mb-3">Contact</h2>
+      <p class="text-gray-300 mb-3">For collaborations, workshops, research, or product demos — reach out.</p>
+      <p class="text-gray-300">📧 <a href="mailto:info@cartoxr.in" class="text-teal-300 hover:underline">info@cartoxr.in</a></p>
+
+      <div class="mt-6 flex items-center justify-center gap-4">
+        <a href="https://www.linkedin.com" class="px-4 py-2 border border-gray-700 rounded-md text-sm text-gray-200">LinkedIn</a>
+        <a href="https://www.youtube.com" class="px-4 py-2 border border-gray-700 rounded-md text-sm text-gray-200">YouTube</a>
+      </div>
+
+      <a href="CartoXR_Brochure.pdf" download class="mt-6 inline-block px-6 py-3 rounded-full bg-gradient-to-r from-[#06b6d4] to-[#14b8a6] text-black font-semibold">📄 Download Company Brochure</a>
+    </div>
+  </section>
+
+  <footer class="py-8 text-center text-gray-500 border-t border-gray-800">
+    © 2025 CartoXR • All Rights Reserved
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script>
+    // Open video modal with chosen file (assumes mp4 files exist under images/)
+    function openVideoModal(filename, poster) {
+      const modal = document.getElementById('videoModal');
+      const player = document.getElementById('modal-player');
+      const source = document.getElementById('modalSource');
+
+      // prefer mp4; user provided file list includes mp4 and mov; we try .mp4 first
+      source.src = 'images/' + filename;
+      player.load();
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeVideoModal(){
+      const modal = document.getElementById('videoModal');
+      const player = document.getElementById('modal-player');
+      player.pause();
+      player.currentTime = 0;
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    // Close modal on Esc
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape') closeVideoModal();
+    });
+
+    // Small reveal on scroll for sections
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add('opacity-100','translate-y-0');
+          entry.target.classList.remove('opacity-0','-translate-y-6');
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('section').forEach(sec => {
+      sec.classList.add('opacity-0','-translate-y-6','transition','duration-700','ease-out');
+      observer.observe(sec);
+    });
+  </script>
+</body>
+</html>
