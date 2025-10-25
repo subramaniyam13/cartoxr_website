@@ -7,7 +7,7 @@
 
   <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="icon" href="images/Logo.png" />
+  <link rel="icon" href="images/logo.png" />
   <style>
     :root{
       --bg:#050507;
@@ -59,7 +59,7 @@
   <!-- HERO -->
   <header class="min-h-screen flex items-center justify-center text-center px-6 pt-20">
     <div class="max-w-4xl">
-      <img src="images/logo.png" alt="CartoXR" class="mx-auto h-48 md:h-60 mb-6 transition-transform transform-gpu" />
+      <img src="images/logo.png" alt="CartoXR" class="mx-auto h-68 md:h-60 mb-6 transition-transform transform-gpu" />
       <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-4 accent-text">Blending Geospatial Intelligence with Immersive Technologies</h1>
       <p class="text-gray-300 max-w-3xl mx-auto mb-6">
         “To make immersive GIS accessible to all — empowering industries, researchers, and learners with interactive geospatial visualization and spatial analytics in AR/VR environments.”
@@ -206,85 +206,67 @@
     </div>
   </section>
 
-  <!-- VISUALISING OUR IMPACT (photos + videos thumbnails) -->
-  <section id="media" class="py-12">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-2xl md:text-3xl font-semibold accent-text mb-6">Our Work in Action</h2>
+<!-- VISUALISING OUR IMPACT (image gallery only) -->
+<section id="media" class="py-12">
+  <div class="max-w-6xl mx-auto px-6">
+    <h2 class="text-2xl md:text-3xl font-semibold accent-text mb-6">Visualising our Impact</h2>
 
-      <div class="grid md:grid-cols-3 gap-6">
-        <!-- Clickable thumbnail to open modal playing video -->
-        <div class="relative cursor-pointer group" onclick="openVideoModal('2_AR_Utility_Mapping.mp4','images/ARnav2.png')">
-          <img src="images/ARnav2.png" alt="AR Utility Mapping" class="rounded-xl w-full h-56 object-cover group-hover:opacity-70 transition" />
-          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div class="rounded-full bg-white/90 p-3 text-black text-xl">▶</div>
-          </div>
-        </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <img src="images/ARnav2.png" alt="AR Utility Mapping" class="rounded-xl w-full h-56 object-cover" />
+      <img src="images/UAV2.png" alt="AR Satellite" class="rounded-xl w-full h-56 object-cover" />
+      <img src="images/uav_me_dharshan.png" alt="VR Volume Calculation" class="rounded-xl w-full h-56 object-cover" />
+      <img src="images/team1.png" alt="Measuring Line Feature in VR" class="rounded-xl w-full h-56 object-cover" />
+      <img src="images/bajaj.png" alt="Client: Bajaj" class="rounded-xl w-full h-56 object-cover" />
+      <img src="images/UAV3.jpg" alt="UAV3" class="rounded-xl w-full h-56 object-cover" />
+    </div>
 
-        <div class="relative cursor-pointer group" onclick="openVideoModal('3_AR_Satellite_data.mp4','images/UAV2.png')">
-          <img src="images/UAV2.png" alt="AR Satellite" class="rounded-xl w-full h-56 object-cover group-hover:opacity-70 transition" />
-          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div class="rounded-full bg-white/90 p-3 text-black text-xl">▶</div>
-          </div>
-        </div>
+    <div class="mt-6 text-sm text-gray-400 text-center">
+      Showcasing our AR/VR geospatial and client projects.
+    </div>
+  </div>
+</section>
 
-        <div class="relative cursor-pointer group" onclick="openVideoModal('volume_calc_vr.mp4','images/uav_me_dharshan.png')">
-          <img src="images/uav_me_dharshan.png" alt="VR Volume Calculation" class="rounded-xl w-full h-56 object-cover group-hover:opacity-70 transition" />
-          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div class="rounded-full bg-white/90 p-3 text-black text-xl">▶</div>
-          </div>
-        </div>
 
-        <div class="relative cursor-pointer group" onclick="openVideoModal('measuring_linefeature_VR.mp4','images/team1.png')">
-          <img src="images/team1.png" alt="Measuring Line Feature in VR" class="rounded-xl w-full h-56 object-cover group-hover:opacity-70 transition" />
-          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div class="rounded-full bg-white/90 p-3 text-black text-xl">▶</div>
-          </div>
-        </div>
+ <!-- MEET OUR TEAM -->
+<section id="team" class="py-12 bg-gray-900/30">
+  <div class="max-w-6xl mx-auto px-6">
+    <h2 class="text-2xl md:text-3xl font-semibold accent-text mb-6">Meet Our Team</h2>
 
-        <!-- image-only thumbnails -->
-        <img src="images/bajaj.png" alt="Client: Bajaj" class="rounded-xl w-full h-56 object-cover" />
-        <img src="images/UAV3.jpg" alt="UAV3" class="rounded-xl w-full h-56 object-cover" />
+    <div class="h-scroll gap-6 flex items-stretch py-4">
+      <!-- Bala -->
+      <div class="min-w-[300px] max-w-[300px] bg-[#071226] rounded-2xl p-6 card-border mr-4 text-center">
+        <img src="images/bala.png" alt="Bala" class="w-28 h-28 object-cover rounded-full mx-auto mb-4" />
+        <h3 class="font-semibold text-lg">S. Bala Subramaniyam</h3>
+        <p class="text-sm text-gray-300 mt-1">XR Developer | GIS Specialist | Co-Founder, CartoXR</p>
+        <p class="text-sm text-gray-400 mt-3">
+          Merging Geospatial Intelligence with Immersive Technologies. Expertise in AR/VR, GEE, QGIS and GIS pipelines.
+        </p>
       </div>
 
-      <div class="mt-6 text-sm text-gray-400">Tip: click any thumbnail to open the video.</div>
-    </div>
-  </section>
+      <!-- Dharshan -->
+      <div class="min-w-[300px] max-w-[300px] bg-[#071226] rounded-2xl p-6 card-border mr-4 text-center">
+        <img src="images/dharshan.jpg" alt="Dharshan" class="w-28 h-28 object-cover rounded-full mx-auto mb-4" />
+        <h3 class="font-semibold text-lg">Dharshan Shylesh</h3>
+        <p class="text-sm text-gray-300 mt-1">XR Developer | Researcher | Co-Founder, CartoXR</p>
+        <p class="text-sm text-gray-400 mt-3">
+          Works on immersive visualisation of remote sensing & 3D model accuracy assessment inside VR environments.
+        </p>
+      </div>
 
-  <!-- VIDEO MODAL -->
-  <div id="videoModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
-    <div class="max-w-4xl w-full px-4">
-      <div class="relative bg-[#071226] rounded-2xl overflow-hidden">
-        <button onclick="closeVideoModal()" class="absolute right-3 top-3 z-50 text-gray-200 text-2xl">✕</button>
-        <video id="modal-player" controls playsinline class="w-full h-[60vh] bg-black object-contain">
-          <source id="modalSource" src="" type="video/mp4" />
-          Your browser does not support video.
-        </video>
+      <!-- Darwin -->
+      <div class="min-w-[300px] max-w-[300px] bg-[#071226] rounded-2xl p-6 card-border mr-4 text-center">
+        <img src="images/d.png" alt="Darwin Thankapan" class="w-28 h-28 object-cover rounded-full mx-auto mb-4" />
+        <h3 class="font-semibold text-lg">Darwin Thankapan</h3>
+        <p class="text-sm text-gray-300 mt-1">Co-Founder & Designated Partner</p>
+        <p class="text-sm text-gray-400 mt-1">Diploma in Civil Engineering</p>
+        <p class="text-sm text-gray-400 mt-3">
+          More than 30 years of experience in the field of Construction as a Sole Proprietor.
+        </p>
       </div>
     </div>
   </div>
+</section>
 
-  <!-- MEET OUR TEAM -->
-  <section id="team" class="py-12 bg-gray-900/30">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-2xl md:text-3xl font-semibold accent-text mb-6">Meet Our Team</h2>
-
-      <div class="h-scroll gap-6 flex items-stretch py-4">
-        <div class="min-w-[300px] max-w-[300px] bg-[#071226] rounded-2xl p-6 card-border mr-4 text-center">
-          <img src="images/bala.png" alt="Bala" class="w-28 h-28 object-cover rounded-full mx-auto mb-4" />
-          <h3 class="font-semibold text-lg">S. Bala Subramaniyam</h3>
-          <p class="text-sm text-gray-300 mt-1">XR Developer | GIS Specialist | Co-Founder, CartoXR</p>
-          <p class="text-sm text-gray-400 mt-3">Merging Geospatial Intelligence with Immersive Technologies. Expertise in AR/VR, GEE, QGIS and GIS pipelines.</p>
-        </div>
-
-        <div class="min-w-[300px] max-w-[300px] bg-[#071226] rounded-2xl p-6 card-border mr-4 text-center">
-          <img src="images/dharshan.jpg" alt="Dharshan" class="w-28 h-28 object-cover rounded-full mx-auto mb-4" />
-          <h3 class="font-semibold text-lg">Dharshan Shylesh</h3>
-          <p class="text-sm text-gray-300 mt-1">XR Developer | Researcher | Co-Founder, CartoXR</p>
-          <p class="text-sm text-gray-400 mt-3">Works on immersive visualisation of remote sensing & 3D model accuracy assessment inside VR environments.</p>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- CONTACT -->
   <section id="contact" class="py-12">
@@ -352,6 +334,7 @@
   </script>
 </body>
 </html>
+
 
 
 
