@@ -3,343 +3,1129 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CartoXR — Immersive Geospatial Intelligence</title>
-
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>CartoXR — Geospatial Intelligence & Immersive Analytics</title>
   <link rel="icon" href="images/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+
   <style>
-    :root{
-      --bg:#050507;
-      --muted:#9CA3AF;
-      --card:#0f1720;
-      --teal-start:#06b6d4;
-      --teal-end:#14b8a6;
+    :root {
+      --bg:       #04080f;
+      --surface:  #080f1c;
+      --surface2: #0c1628;
+      --border:   rgba(255,255,255,0.06);
+      --teal:     #0ff0c0;
+      --teal2:    #06cfb4;
+      --blue:     #38bdf8;
+      --muted:    #7a90a8;
+      --text:     #d4e4f0;
+      --white:    #f0f8ff;
     }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body { background: var(--bg); color: #e6eef2; font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
-    .accent-text { background: linear-gradient(90deg,var(--teal-start),var(--teal-end)); -webkit-background-clip: text; color: transparent; }
-    .card-border { border: 1px solid rgba(20,24,28,0.6); box-shadow: 0 6px 18px rgba(2,6,23,0.6); }
-    .h-scroll { -webkit-overflow-scrolling: touch; overflow-x:auto; overflow-y:hidden; scroll-behavior:smooth; }
-    /* hide default scrollbar but keep scroll */
-    .h-scroll::-webkit-scrollbar { height: 8px; }
-    .h-scroll::-webkit-scrollbar-thumb { background: linear-gradient(90deg,var(--teal-start),var(--teal-end)); border-radius:999px; }
-    /* Media modal styles */
-    .modal-backdrop { background: rgba(0,0,0,0.86); backdrop-filter: blur(6px); }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.35;
+    }
+
+    /* ── TYPOGRAPHY ── */
+    .display { font-family: 'DM Serif Display', serif; }
+    .accent { color: var(--teal); }
+    .accent-blue { color: var(--blue); }
+
+    /* gradient text */
+    .grad {
+      background: linear-gradient(135deg, var(--teal) 0%, var(--blue) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+      background: rgba(4,8,15,0.82);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+    .nav-inner {
+      max-width: 1280px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 68px;
+    }
+    .nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .nav-brand img { height: 44px; }
+    .nav-brand-name { font-size: 1.15rem; font-weight: 600; color: var(--white); }
+    .nav-brand-name span { color: var(--teal); }
+    .nav-brand-sub { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.82rem; letter-spacing: 0.04em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; transition: color 0.2s;
+      font-weight: 500;
+    }
+    .nav-links a:hover { color: var(--teal); }
+
+    .nav-cta {
+      padding: 8px 20px; border-radius: 999px;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      color: #04080f; font-size: 0.8rem; font-weight: 700;
+      text-decoration: none; letter-spacing: 0.03em;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .nav-cta:hover { opacity: 0.88; transform: scale(1.03); }
+
+    .hamburger { display: none; background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; }
+
+    @media(max-width: 900px) {
+      .nav-links { display: none; }
+      .hamburger { display: block; }
+      .nav-cta { display: none; }
+    }
+
+    /* ── MOBILE MENU ── */
+    #mobile-menu {
+      display: none; position: fixed; inset: 0; z-index: 850;
+      background: rgba(4,8,15,0.97); flex-direction: column;
+      align-items: center; justify-content: center; gap: 2rem;
+    }
+    #mobile-menu.open { display: flex; }
+    #mobile-menu a {
+      font-size: 1.5rem; color: var(--text); text-decoration: none;
+      font-family: 'DM Serif Display', serif;
+      transition: color 0.2s;
+    }
+    #mobile-menu a:hover { color: var(--teal); }
+    #mobile-menu .close-btn {
+      position: absolute; top: 1.5rem; right: 2rem;
+      background: none; border: none; color: var(--muted); font-size: 2rem; cursor: pointer;
+    }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 120px 2rem 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* radial glow */
+    #hero::after {
+      content: '';
+      position: absolute;
+      top: 30%; left: 50%; transform: translate(-50%, -50%);
+      width: 800px; height: 600px;
+      background: radial-gradient(ellipse, rgba(15,240,192,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* grid lines bg */
+    #hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(15,240,192,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15,240,192,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 16px; border-radius: 999px;
+      border: 1px solid rgba(15,240,192,0.25);
+      background: rgba(15,240,192,0.05);
+      font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--teal); margin-bottom: 2rem;
+    }
+    .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); animation: pulse 2s infinite; }
+
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.4); }
+    }
+
+    .hero-logo { height: 110px; margin-bottom: 2rem; filter: drop-shadow(0 0 30px rgba(15,240,192,0.3)); }
+
+    .hero-h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.4rem, 6vw, 5rem);
+      color: var(--white); line-height: 1.12;
+      margin-bottom: 1.5rem; max-width: 900px;
+    }
+    .hero-h1 em { font-style: italic; color: var(--teal); }
+
+    .hero-sub {
+      font-size: clamp(0.95rem, 2vw, 1.1rem);
+      color: var(--muted); max-width: 620px;
+      margin: 0 auto 2.5rem; font-weight: 300;
+    }
+
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+    .btn-primary {
+      padding: 14px 32px; border-radius: 999px;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      color: #04080f; font-weight: 700; font-size: 0.9rem;
+      text-decoration: none; letter-spacing: 0.02em;
+      transition: opacity 0.2s, transform 0.2s;
+      box-shadow: 0 0 30px rgba(15,240,192,0.25);
+    }
+    .btn-primary:hover { opacity: 0.85; transform: translateY(-2px); }
+
+    .btn-ghost {
+      padding: 14px 32px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: var(--text); font-size: 0.9rem;
+      text-decoration: none; transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--teal); color: var(--teal); }
+
+    /* ── STAT BAR ── */
+    .stat-bar {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stat-bar-inner {
+      max-width: 1280px; margin: 0 auto;
+      display: flex; flex-wrap: wrap;
+      padding: 0 2rem;
+    }
+    .stat-item {
+      flex: 1 1 160px;
+      padding: 1.8rem 2rem;
+      border-right: 1px solid var(--border);
+      text-align: center;
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.4rem; color: var(--white);
+      line-height: 1;
+    }
+    .stat-num span { color: var(--teal); }
+    .stat-label { font-size: 0.75rem; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 4px; }
+
+    /* ── SECTION WRAPPER ── */
+    .section { padding: 96px 2rem; }
+    .section-inner { max-width: 1280px; margin: 0 auto; }
+    .section-alt { background: var(--surface); }
+
+    .section-label {
+      font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--teal); margin-bottom: 12px; font-weight: 500;
+    }
+    .section-h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      color: var(--white); line-height: 1.2; margin-bottom: 1.2rem;
+    }
+    .section-sub {
+      color: var(--muted); max-width: 580px;
+      font-size: 0.95rem; font-weight: 300;
+    }
+
+    /* ── SERVICES GRID ── */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-top: 3rem;
+    }
+    .service-card {
+      background: var(--surface2);
+      padding: 2rem;
+      transition: background 0.25s;
+    }
+    .service-card:hover { background: #111e36; }
+    .service-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      background: linear-gradient(135deg, rgba(15,240,192,0.12), rgba(56,189,248,0.12));
+      border: 1px solid rgba(15,240,192,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; margin-bottom: 1rem;
+    }
+    .service-title { font-size: 1rem; font-weight: 600; color: var(--white); margin-bottom: 0.5rem; }
+    .service-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── PROJECTS ── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+    .project-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+      position: relative;
+    }
+    .project-card:hover { border-color: rgba(15,240,192,0.3); transform: translateY(-4px); }
+
+    .project-card.featured {
+      grid-column: span 2;
+    }
+    @media(max-width: 800px) { .project-card.featured { grid-column: span 1; } }
+
+    .project-img { width: 100%; height: 220px; object-fit: cover; display: block; }
+    .project-card.featured .project-img { height: 320px; }
+
+    .project-tag {
+      position: absolute; top: 12px; left: 12px;
+      padding: 4px 12px; border-radius: 999px;
+      font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600;
+    }
+    .tag-climate { background: rgba(15,240,192,0.15); color: var(--teal); border: 1px solid rgba(15,240,192,0.3); }
+    .tag-xr { background: rgba(56,189,248,0.15); color: var(--blue); border: 1px solid rgba(56,189,248,0.3); }
+    .tag-uav { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+
+    .project-body { padding: 1.5rem; }
+    .project-client {
+      font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--teal); margin-bottom: 6px; font-weight: 500;
+    }
+    .project-title { font-size: 1.05rem; font-weight: 600; color: var(--white); margin-bottom: 0.6rem; }
+    .project-desc { font-size: 0.84rem; color: var(--muted); line-height: 1.65; }
+    .project-meta {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1rem;
+    }
+    .project-chip {
+      padding: 3px 10px; border-radius: 999px;
+      font-size: 0.68rem; border: 1px solid var(--border);
+      color: var(--muted); background: rgba(255,255,255,0.03);
+    }
+
+    /* ── PUBLICATIONS ── */
+    .pub-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+      margin-top: 3rem;
+    }
+    @media(max-width: 768px) { .pub-grid { grid-template-columns: 1fr; } }
+
+    .pub-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.6rem;
+      transition: border-color 0.3s;
+    }
+    .pub-card:hover { border-color: rgba(15,240,192,0.25); }
+    .pub-type {
+      font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--blue); font-weight: 600; margin-bottom: 8px;
+    }
+    .pub-title { font-size: 0.9rem; color: var(--white); font-weight: 500; margin-bottom: 6px; line-height: 1.5; }
+    .pub-meta { font-size: 0.78rem; color: var(--muted); }
+    .pub-link {
+      display: inline-block; margin-top: 10px;
+      font-size: 0.75rem; color: var(--teal); text-decoration: none;
+      border-bottom: 1px solid rgba(15,240,192,0.3);
+      padding-bottom: 1px; transition: border-color 0.2s;
+    }
+    .pub-link:hover { border-color: var(--teal); }
+
+    /* patents */
+    .patent-card {
+      background: linear-gradient(135deg, rgba(15,240,192,0.04), rgba(56,189,248,0.04));
+      border: 1px solid rgba(15,240,192,0.15);
+      border-radius: 14px; padding: 1.6rem;
+      display: flex; gap: 1rem; align-items: flex-start;
+    }
+    .patent-icon { font-size: 1.6rem; flex-shrink: 0; }
+    .patent-title { font-size: 0.88rem; color: var(--white); font-weight: 500; line-height: 1.5; }
+
+    /* awards row */
+    .awards-row { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2rem; }
+    .award-pill {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 18px; border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      font-size: 0.82rem; color: var(--text);
+    }
+    .award-pill .aw-icon { font-size: 1rem; }
+
+    /* ── WORKSHOPS ── */
+    .workshop-scroll { display: flex; gap: 1.25rem; overflow-x: auto; padding-bottom: 12px; margin-top: 3rem; }
+    .workshop-scroll::-webkit-scrollbar { height: 4px; }
+    .workshop-scroll::-webkit-scrollbar-thumb { background: var(--teal); border-radius: 999px; }
+    .workshop-card {
+      flex-shrink: 0; width: 300px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .workshop-card:hover { border-color: rgba(15,240,192,0.25); transform: translateY(-3px); }
+    .workshop-card img { width: 100%; height: 170px; object-fit: cover; display: block; }
+    .workshop-body { padding: 1.2rem; }
+    .workshop-inst {
+      font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--teal); font-weight: 600; margin-bottom: 4px;
+    }
+    .workshop-title { font-size: 0.9rem; font-weight: 600; color: var(--white); margin-bottom: 6px; line-height: 1.4; }
+    .workshop-meta { font-size: 0.78rem; color: var(--muted); }
+
+    /* ── MEDIA GRID ── */
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem; margin-top: 3rem;
+    }
+    @media(max-width: 600px) { .media-grid { grid-template-columns: repeat(2,1fr); } }
+    .media-item {
+      aspect-ratio: 4/3; overflow: hidden; border-radius: 10px;
+      border: 1px solid var(--border); cursor: pointer; position: relative;
+    }
+    .media-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s; }
+    .media-item:hover img { transform: scale(1.06); }
+    .media-overlay {
+      position: absolute; inset: 0; background: rgba(15,240,192,0.08);
+      opacity: 0; transition: opacity 0.3s;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+    }
+    .media-item:hover .media-overlay { opacity: 1; }
+
+    /* ── TEAM ── */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem; margin-top: 3rem;
+    }
+    .team-card {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 16px; padding: 2rem; text-align: center;
+      transition: border-color 0.3s;
+    }
+    .team-card:hover { border-color: rgba(15,240,192,0.25); }
+    .team-avatar {
+      width: 90px; height: 90px; border-radius: 50%;
+      object-fit: cover; margin: 0 auto 1.2rem;
+      border: 2px solid rgba(15,240,192,0.3);
+    }
+    .team-name { font-family: 'DM Serif Display', serif; font-size: 1.15rem; color: var(--white); margin-bottom: 4px; }
+    .team-role { font-size: 0.78rem; color: var(--teal); letter-spacing: 0.04em; margin-bottom: 0.8rem; }
+    .team-bio { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── CONTACT ── */
+    .contact-wrap {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+    }
+    @media(max-width: 768px) { .contact-wrap { grid-template-columns: 1fr; } }
+
+    .contact-links { display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem; }
+    .contact-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 1rem 1.2rem; border-radius: 10px;
+      border: 1px solid var(--border); background: var(--surface2);
+      text-decoration: none; color: var(--text); transition: border-color 0.2s;
+    }
+    .contact-item:hover { border-color: rgba(15,240,192,0.3); color: var(--white); }
+    .contact-item-icon { font-size: 1.2rem; }
+    .contact-item-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+    .contact-item-val { font-size: 0.9rem; color: var(--text); }
+
+    .contact-card {
+      background: linear-gradient(135deg, rgba(15,240,192,0.06), rgba(56,189,248,0.06));
+      border: 1px solid rgba(15,240,192,0.15);
+      border-radius: 20px; padding: 2.5rem;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      font-size: 0.8rem; color: var(--muted);
+    }
+    footer a { color: var(--teal); text-decoration: none; }
+
+    /* ── REVEAL ANIMATION ── */
+    .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── DIVIDER LINE ── */
+    .divider {
+      width: 48px; height: 2px;
+      background: linear-gradient(90deg, var(--teal), var(--blue));
+      border-radius: 999px; margin-bottom: 1.5rem;
+    }
+
   </style>
 </head>
 <body>
 
-  <!-- NAV -->
-  <nav class="fixed w-full z-50 top-0 left-0 bg-black/60 backdrop-blur-md">
-    <div class="max-w-7xl mx-auto px-6 md:px-10 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <!-- larger logo -->
-        <img src="images/logo.png" alt="CartoXR Logo" class="h-16 md:h-20 object-contain" />
+  <!-- ===== NAV ===== -->
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="nav-brand">
+        <img src="images/logo.png" alt="CartoXR" />
         <div>
-          <div class="text-white font-semibold text-lg">Carto<span class="text-teal-400">XR</span></div>
-          <div class="text-xs text-gray-400">Immersive Geospatial Intelligence</div>
+          <div class="nav-brand-name">Carto<span>XR</span></div>
+          <div class="nav-brand-sub">Geospatial Intelligence</div>
         </div>
-      </div>
-
-      <div class="hidden md:flex items-center gap-6 text-sm text-gray-300">
-        <a href="#about" class="hover:text-teal-300 transition">About</a>
-        <a href="#projects" class="hover:text-teal-300 transition">Projects</a>
-        <a href="#publications" class="hover:text-teal-300 transition">Publications</a>
-        <a href="#workshops" class="hover:text-teal-300 transition">Workshops</a>
-        <a href="#media" class="hover:text-teal-300 transition">Media</a>
-        <a href="#team" class="hover:text-teal-300 transition">Meet Our Team</a>
-        <a href="#contact" class="hover:text-teal-300 transition">Contact</a>
-      </div>
-
-      <div class="md:hidden text-gray-300">☰</div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#publications">Research</a></li>
+        <li><a href="#workshops">Workshops</a></li>
+        <li><a href="#team">Team</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <a href="CartoXR_Brochure.pdf" download class="nav-cta">Download Brochure</a>
+      <button class="hamburger" onclick="document.getElementById('mobile-menu').classList.toggle('open')">☰</button>
     </div>
   </nav>
 
-  <!-- HERO -->
-  <header class="min-h-screen flex items-center justify-center text-center px-6 pt-20">
-    <div class="max-w-4xl">
-      <img src="images/logo.png" alt="CartoXR" class="mx-auto h-68 md:h-60 mb-6 transition-transform transform-gpu" />
-      <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-4 accent-text">Blending Geospatial Intelligence with Immersive Technologies</h1>
-      <p class="text-gray-300 max-w-3xl mx-auto mb-6">
-        “To make immersive GIS accessible to all — empowering industries, researchers, and learners with interactive geospatial visualization and spatial analytics in AR/VR environments.”
-      </p>
-      <div class="flex items-center justify-center gap-4">
-        <a href="#projects" class="px-5 py-3 rounded-full bg-gradient-to-r from-[#06b6d4] to-[#14b8a6] text-black font-semibold shadow-md hover:scale-105 transition">View Our Work</a>
-        <a href="CartoXR_Brochure.pdf" download class="px-5 py-3 rounded-full border border-gray-700 text-gray-200 hover:border-teal-400 transition">📄 Download Brochure</a>
-      </div>
+  <!-- mobile menu -->
+  <div id="mobile-menu">
+    <button class="close-btn" onclick="document.getElementById('mobile-menu').classList.remove('open')">✕</button>
+    <a href="#about" onclick="document.getElementById('mobile-menu').classList.remove('open')">About</a>
+    <a href="#services" onclick="document.getElementById('mobile-menu').classList.remove('open')">Services</a>
+    <a href="#projects" onclick="document.getElementById('mobile-menu').classList.remove('open')">Projects</a>
+    <a href="#publications" onclick="document.getElementById('mobile-menu').classList.remove('open')">Research</a>
+    <a href="#workshops" onclick="document.getElementById('mobile-menu').classList.remove('open')">Workshops</a>
+    <a href="#team" onclick="document.getElementById('mobile-menu').classList.remove('open')">Team</a>
+    <a href="#contact" onclick="document.getElementById('mobile-menu').classList.remove('open')">Contact</a>
+  </div>
+
+  <!-- ===== HERO ===== -->
+  <header id="hero">
+    <div class="hero-badge"><span class="dot"></span> Geospatial Intelligence · Remote Sensing · Immersive XR</div>
+    <img src="images/logo.png" alt="CartoXR" class="hero-logo" />
+    <h1 class="hero-h1">
+      Mapping the Planet,<br/>
+      <em>Securing Its Future</em>
+    </h1>
+    <p class="hero-sub">
+      CartoXR delivers satellite image analysis, UAV mapping, climate risk modelling, and immersive XR visualization — translating geospatial data into decisions that matter.
+    </p>
+    <div class="hero-btns">
+      <a href="#projects" class="btn-primary">View Projects</a>
+      <a href="CartoXR_Brochure.pdf" download class="btn-ghost">📄 Download Brochure</a>
     </div>
   </header>
 
-  <!-- ABOUT -->
-  <section id="about" class="py-16">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-2xl md:text-3xl font-semibold text-center mb-4 accent-text">About CartoXR</h2>
-      <p class="text-center text-gray-300 max-w-4xl mx-auto">
-        CartoXR pioneers the fusion of Geoinformatics and Extended Reality (XR). We design and deliver immersive solutions — UAV mapping, AR indoor navigation, VR visualization, and XR-enabled spatial analytics — for industry, government, and academia. Our approach combines rigorous geospatial methods with practical immersive UX to accelerate decision-making and training.
-      </p>
-    </div>
-  </section>
-
-  <!-- PROJECTS (horizontal scroll) -->
-  <section id="projects" class="py-10 bg-gray-900/40">
-    <div class="max-w-6xl mx-auto px-6">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-2xl md:text-3xl font-semibold accent-text">Projects</h2>
-        <div class="text-sm text-gray-400">Scroll →</div>
+  <!-- ===== STAT BAR ===== -->
+  <div class="stat-bar">
+    <div class="stat-bar-inner">
+      <div class="stat-item reveal">
+        <div class="stat-num">2<span>+</span></div>
+        <div class="stat-label">Patents Granted</div>
       </div>
-
-      <div class="h-scroll gap-6 flex items-stretch py-4">
-        <!-- card example repeated for each project; update thumbnails accordingly -->
-        <article class="min-w-[320px] max-w-[320px] bg-[#071023] rounded-2xl card-border p-4 mr-4">
-          <img src="images/uav_me_dharshan.png" alt="UAV Mapping" class="rounded-xl mb-3 w-full h-40 object-cover" />
-          <h3 class="font-semibold text-lg">UAV Survey & Mapping</h3>
-          <p class="text-sm text-gray-400 mt-2">High-resolution aerial data acquisition, precision mapping, rapid deployment for emergency response. Case Study: 2023 Chennai floods (Bajaj Allianz).</p>
-        </article>
-
-        <article class="min-w-[320px] max-w-[320px] bg-[#071023] rounded-2xl card-border p-4 mr-4">
-          <img src="images/ARnav1.png" alt="AR Indoor Nav" class="rounded-xl mb-3 w-full h-40 object-cover" />
-          <h3 class="font-semibold text-lg">AR-based Indoor Navigation</h3>
-          <p class="text-sm text-gray-400 mt-2">AR indoor navigation module using Unity as Library for Android & iOS integration. (LTI Mindtree)</p>
-        </article>
-
-        <article class="min-w-[320px] max-w-[320px] bg-[#071023] rounded-2xl card-border p-4 mr-4">
-          <img src="images/STORY1.png" alt="VR Storytelling" class="rounded-xl mb-3 w-full h-40 object-cover" />
-          <h3 class="font-semibold text-lg">VR-based Storytelling</h3>
-          <p class="text-sm text-gray-400 mt-2">Immersive VR storytelling experience — history-focused narrative and environment design.</p>
-        </article>
-     
-       
+      <div class="stat-item reveal">
+        <div class="stat-num">10<span>+</span></div>
+        <div class="stat-label">Publications</div>
       </div>
-    </div>
-  </section>
-
-  <!-- PUBLICATIONS & PATENTS -->
-  <section id="publications" class="py-12">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-2xl md:text-3xl font-semibold mb-6 accent-text">Publications & Patents</h2>
-
-      <div class="grid md:grid-cols-2 gap-6">
-        <div class="bg-[#071226] rounded-2xl p-6 card-border">
-          <h3 class="font-semibold text-lg mb-3">Patents</h3>
-          <ul class="text-gray-300 list-disc pl-5 space-y-2 text-sm">
-            <li><b>SYSTEM AND METHOD FOR CREATING AND EDITING THREE-DIMENSIONAL SPATIAL VECTOR DATA IN VIRTUAL REALITY ENVIRONMENT</b></li>
-            <li><b>SYSTEM AND METHOD FOR MEASUREMENTS ON A 3D REAL-WORLD RECONSTRUCTED MODEL IN AN IMMERSIVE VIRTUAL ENVIRONMENT</b></li>
-          </ul>
-        </div>
-
-        <div class="bg-[#071226] rounded-2xl p-6 card-border">
-          <h3 class="font-semibold text-lg mb-3">Selected Publications (2021–2024)</h3>
-          <ul class="text-gray-300 list-disc pl-5 space-y-2 text-sm">
-            <li>Subramaniyam, B., Shylesh, D., Ramasamy, J., & Kumar, N. — <i>A Virtual Reality Tool for Accuracy Assessment of 3D Models in an Immersive Virtual Environment</i>, ISPRS Ann. Photogramm. Remote Sens. Spatial Inf. Sci., X-4-2024, 333–340. DOI: <a class="text-teal-300" href="https://doi.org/10.5194/isprs-annals-X-4-2024-333-2024" target="_blank">10.5194/...</a></li>
-
-            <li>S Bala Subramaniyam, Reshma Raskar-Phule — <i>Real-time Computation of Precipitable Water Vapor from GPS Data</i>, in <b>GNSS Applications in Earth and Space Observations</b>, Taylor & Francis. DOI: <a class="text-teal-300" href="https://doi.org/10.1201/9781032712444-18" target="_blank">10.1201/...</a></li>
-
-            <li>Subramaniyam, S. B., & Sabirul, S. (2024). <i>Mapping and analyzing air pollution using Google Earth Engine of Thiruvananthapuram City</i>. In Disaster risk, resilient agriculture and livelihood. Routledge India.</li>
-
-            <li>S Bala Subramaniyam, Reshma Raskar-Phule — <i>Planning and Mapping of a Multi Modal Integrated Transportation System for Metro Station at Dadar, Mumbai India</i>, Journal of Civil Engineering Inter Disciplinaries 2(2):7-17, Apr 2021.</li>
-
-            <li>Richard D’Silva, S Bala Subramaniyam, Reshma Raskar-Phule — <i>Assessing Urban Water Stream Pollution by Using Geospatial Technologies</i> — (book chapter submitted to CRC Press, Taylor & Francis).</li>
-
-            <li>Jaganathan, R., Shylesh D. S., & John, J. (2022). <i>A localized counter-based filtering approach for generating digital terrain model</i>, Geocarto International, 37(26), 13229–13247. DOI: <a class="text-teal-300" href="https://doi.org/10.1080/10106049.2022.2076920" target="_blank">10.1080/...</a></li>
-
-            <li>John, J., Jaganathan, R., Dharshan Shylesh, D.S. (2021). <i>Mapping of Soil Moisture Index Using Optical and Thermal Remote Sensing</i>. In: SECON’21. Lecture Notes in Civil Engineering, vol 171. DOI: <a class="text-teal-300" href="https://doi.org/10.1007/978-3-030-80312-4_65" target="_blank">10.1007/...</a></li>
-
-            <li>Applied Geomatics (2023) — Influence of GCPs on UAV positional accuracy. (D. S. et al.) DOI: <a class="text-teal-300" href="https://doi.org/10.1007/s12518-023-00531-w" target="_blank">10.1007/...</a></li>
-
-            <li>Several 2024 journal articles on land use transformation, groundwater quality and LST interactions — see full CV for details.</li>
-          </ul>
-        </div>
+      <div class="stat-item reveal">
+        <div class="stat-num">5<span>+</span></div>
+        <div class="stat-label">Workshops Delivered</div>
       </div>
-
-      <div class="mt-6 text-sm text-gray-400">
-        <b>Awards & Conference highlights:</b>
-        <ul class="list-disc pl-5 mt-2">
-          <li>Best Poster — ISG-ISRS National Symposium, Pune (Nov 2023).</li>
-          <li>Second Prize — DST Geo-Innovation Challenge (Anna University) — Extended Reality as a tool to visualize natural ecosystems (Jul 2024).</li>
-          <li>Presented at ISPRS TC IV Symposium — Fremantle, Perth, Australia (Oct 2024) — TIF Grant Awardee.</li>
-        </ul>
+      <div class="stat-item reveal">
+        <div class="stat-num">3<span>+</span></div>
+        <div class="stat-label">Industry Clients</div>
       </div>
-    </div>
-  </section>
-
-  <!-- WORKSHOPS (horizontal scroll) -->
-  <section id="workshops" class="py-12 bg-gray-900/30">
-    <div class="max-w-6xl mx-auto px-6">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-2xl md:text-3xl font-semibold accent-text">Workshops & Training</h2>
-        <div class="text-sm text-gray-400">Scroll →</div>
-      </div>
-
-      <div class="h-scroll gap-6 flex items-stretch py-4">
-        <!-- Use the image list and actual workshop text the user provided -->
-        <article class="min-w-[320px] max-w-[320px] bg-[#071226] rounded-2xl p-4 card-border mr-4">
-          <img src="images/workshop_iist2.png" alt="IIST" class="rounded-xl mb-3 w-full h-40 object-cover" />
-          <h3 class="font-semibold">Geospatial Analysis through XR</h3>
-          <p class="text-sm text-gray-400 mt-2">Indian Institute of Space Science and Technology (IIST), Trivandrum — April 24–25, 2025. Unity, Cesium & Mapbox hands-on.</p>
-        </article>
-
-        <article class="min-w-[320px] max-w-[320px] bg-[#071226] rounded-2xl p-4 card-border mr-4">
-          <img src="images/workshop_SPCE_3.PNG" alt="SPCE" class="rounded-xl mb-3 w-full h-40 object-cover" />
-          <h3 class="font-semibold">Google Earth Engine— Sustainable Urban Infrastructure</h3>
-          <p class="text-sm text-gray-400 mt-2">Sardar Patel College of Engineering — AICTE-ATAL program talk on Urban Infrastructure, Sustainability & Climate Change — May 2025.</p>
-        </article>
-
-        <article class="min-w-[320px] max-w-[320px] bg-[#071226] rounded-2xl p-4 card-border mr-4">
-          <img src="images/WORKSHOP_bvp.png" alt="BVP" class="rounded-xl mb-3 w-full h-40 object-cover" />
-          <h3 class="font-semibold">Extended Reality & Geoinformatics</h3>
-          <p class="text-sm text-gray-400 mt-2">Bharati Vidyapeeth (Deemed University) Institute of Environment Education & Research, Pune — Sep 2024.</p>
-        </article>
-
-        <article class="min-w-[320px] max-w-[320px] bg-[#071226] rounded-2xl p-4 card-border mr-4">
-          <img src="images/WORKSHOP_ANNAUNIVERSITY.PNG" alt="QGIS Anna University" class="rounded-xl mb-3 w-full h-40 object-cover" />
-          <h3 class="font-semibold">QGIS Workshop — Anna University</h3>
-          <p class="text-sm text-gray-400 mt-2">One-week QGIS training for land record managers, urban planners & water resource officials — June 2024.</p>
-        </article>
-
-        <article class="min-w-[320px] max-w-[320px] bg-[#071226] rounded-2xl p-4 card-border">
-          <img src="images/WORKSHOP1.png" alt="SIMATS" class="rounded-xl mb-3 w-full h-40 object-cover" />
-          <h3 class="font-semibold">Immersive Engineering — SIMATS</h3>
-          <p class="text-sm text-gray-400 mt-2">"IMMERSIVE ENGINEERING: A HANDS-ON INTRODUCTION TO VIRTUAL REALITY" — Feb 2025.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-<!-- VISUALISING OUR IMPACT (image gallery only) -->
-<section id="media" class="py-12">
-  <div class="max-w-6xl mx-auto px-6">
-    <h2 class="text-2xl md:text-3xl font-semibold accent-text mb-6">Visualising our Impact</h2>
-
-    <div class="grid md:grid-cols-3 gap-6">
-      <img src="images/DST_AWARD_1.PNG" alt="DST_AWARD" class="rounded-xl w-full h-56 object-cover" />
-      <img src="images/DST_AWARD.PNG" alt="DST_AWARD" class="rounded-xl w-full h-56 object-cover" />
-      <img src="images/uav_me_dharshan.png" alt="VR Volume Calculation" class="rounded-xl w-full h-56 object-cover" />
-      <img src="images/team1.png" alt="Measuring Line Feature in VR" class="rounded-xl w-full h-56 object-cover" />
-      <img src="images/UAV3.jpg" alt="Client: Bajaj" class="rounded-xl w-full h-56 object-cover" />
-      <img src="images/WORKSHOP_bvp2.png" alt="UAV3" class="rounded-xl w-full h-56 object-cover" />
-    </div>
-
-    
-  </div>
-</section>
-
-
- <!-- MEET OUR TEAM -->
-<section id="team" class="py-12 bg-gray-900/30">
-  <div class="max-w-6xl mx-auto px-6">
-    <h2 class="text-2xl md:text-3xl font-semibold accent-text mb-6">Meet Our Team</h2>
-
-    <div class="h-scroll gap-6 flex items-stretch py-4">
-      <!-- Bala -->
-      <div class="min-w-[300px] max-w-[300px] bg-[#071226] rounded-2xl p-6 card-border mr-4 text-center">
-        <img src="images/bala.png" alt="Bala" class="w-28 h-28 object-cover rounded-full mx-auto mb-4" />
-        <h3 class="font-semibold text-lg">S. Bala Subramaniyam</h3>
-        <p class="text-sm text-gray-300 mt-1">XR Developer | GIS Specialist | Co-Founder, CartoXR</p>
-        <p class="text-sm text-gray-400 mt-3">
-          Merging Geospatial Intelligence with Immersive Technologies. Expertise in AR/VR, GEE, QGIS and GIS pipelines.
-        </p>
-      </div>
-
-      <!-- Dharshan -->
-      <div class="min-w-[300px] max-w-[300px] bg-[#071226] rounded-2xl p-6 card-border mr-4 text-center">
-        <img src="images/dharshan.jpg" alt="Dharshan" class="w-28 h-28 object-cover rounded-full mx-auto mb-4" />
-        <h3 class="font-semibold text-lg">Dharshan Shylesh</h3>
-        <p class="text-sm text-gray-300 mt-1">XR Developer | Researcher | Co-Founder, CartoXR</p>
-        <p class="text-sm text-gray-400 mt-3">
-          Works on immersive visualisation of remote sensing & 3D model accuracy assessment inside VR environments.
-        </p>
-      </div>
-
-      <!-- Darwin -->
-      <div class="min-w-[300px] max-w-[300px] bg-[#071226] rounded-2xl p-6 card-border mr-4 text-center">
-        <img src="images/d.JPG" alt="Darwin Thankapan" class="w-28 h-28 object-cover rounded-full mx-auto mb-4" />
-        <h3 class="font-semibold text-lg">Darwin Thankapan</h3>
-        <p class="text-sm text-gray-300 mt-1">Co-Founder & Designated Partner</p>
-        <p class="text-sm text-gray-400 mt-1">Diploma in Civil Engineering</p>
-        <p class="text-sm text-gray-400 mt-3">
-          More than 30 years of experience in the field of Construction as a Sole Proprietor.
-        </p>
+      <div class="stat-item reveal">
+        <div class="stat-num">1<span>st</span></div>
+        <div class="stat-label">DST Geo-Innovation Award</div>
       </div>
     </div>
   </div>
-</section>
 
-
-  <!-- CONTACT -->
-  <section id="contact" class="py-12">
-    <div class="max-w-4xl mx-auto px-6 text-center">
-      <h2 class="text-2xl md:text-3xl font-semibold accent-text mb-3">Contact</h2>
-      <p class="text-gray-300 mb-3">For collaborations, workshops, research, or product demos — reach out.</p>
-      <p class="text-gray-300">📧 <a href="mailto:shylesh@cartoxr.com" class="text-teal-300 hover:underline">shylesh@cartoxr.com</a></p>
-
-      <div class="mt-6 flex items-center justify-center gap-4">
-        <a href="https://www.linkedin.com/company/cartoxr/" class="px-4 py-2 border border-gray-700 rounded-md text-sm text-gray-200">LinkedIn</a>
-        <a href="https://www.youtube.com/@TheVirtualBlackboard-zh6xk" class="px-4 py-2 border border-gray-700 rounded-md text-sm text-gray-200">YouTube</a>
+  <!-- ===== ABOUT ===== -->
+  <section id="about" class="section">
+    <div class="section-inner">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center;">
+        <div class="reveal">
+          <div class="section-label">About CartoXR</div>
+          <div class="divider"></div>
+          <h2 class="section-h2">Where Geospatial Science Meets Immersive Technology</h2>
+          <p class="section-sub" style="max-width:100%">
+            CartoXR pioneers the fusion of Geoinformatics and Extended Reality (XR). Founded by researchers and practitioners, we design and deliver rigorous geospatial solutions — from satellite-driven climate analysis and UAV flood mapping to AR/VR spatial visualization — for government, industry, and academia.
+          </p>
+          <p style="color:var(--muted); font-size:0.92rem; margin-top:1.2rem; font-weight:300;">
+            Based in Chennai with project experience across India and presented at international forums including ISPRS Perth 2024, we bring both research depth and delivery capability to every engagement.
+          </p>
+        </div>
+        <div class="reveal" style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div style="background:var(--surface2); border:1px solid var(--border); border-radius:14px; padding:1.5rem;">
+            <div style="font-size:1.8rem; margin-bottom:8px;">🛰️</div>
+            <div style="font-weight:600; color:var(--white); font-size:0.9rem; margin-bottom:4px;">Satellite Analysis</div>
+            <div style="font-size:0.8rem; color:var(--muted);">Sentinel, Landsat, MODIS — multi-sensor workflows</div>
+          </div>
+          <div style="background:var(--surface2); border:1px solid var(--border); border-radius:14px; padding:1.5rem;">
+            <div style="font-size:1.8rem; margin-bottom:8px;">🌊</div>
+            <div style="font-weight:600; color:var(--white); font-size:0.9rem; margin-bottom:4px;">Flood Modelling</div>
+            <div style="font-size:0.8rem; color:var(--muted);">State-scale inundation mapping & risk assessment</div>
+          </div>
+          <div style="background:var(--surface2); border:1px solid var(--border); border-radius:14px; padding:1.5rem;">
+            <div style="font-size:1.8rem; margin-bottom:8px;">🚁</div>
+            <div style="font-weight:600; color:var(--white); font-size:0.9rem; margin-bottom:4px;">UAV Mapping</div>
+            <div style="font-size:0.8rem; color:var(--muted);">High-res aerial acquisition for emergency response</div>
+          </div>
+          <div style="background:var(--surface2); border:1px solid var(--border); border-radius:14px; padding:1.5rem;">
+            <div style="font-size:1.8rem; margin-bottom:8px;">🥽</div>
+            <div style="font-weight:600; color:var(--white); font-size:0.9rem; margin-bottom:4px;">Immersive XR</div>
+            <div style="font-size:0.8rem; color:var(--muted);">AR/VR spatial analytics & decision environments</div>
+          </div>
+        </div>
       </div>
-
-      <a href="CartoXR_Brochure.pdf" download class="mt-6 inline-block px-6 py-3 rounded-full bg-gradient-to-r from-[#06b6d4] to-[#14b8a6] text-black font-semibold">📄 Download Company Brochure</a>
     </div>
   </section>
 
-  <footer class="py-8 text-center text-gray-500 border-t border-gray-800">
-    © 2025 CartoXR • All Rights Reserved
+  <!-- ===== SERVICES ===== -->
+  <section id="services" class="section section-alt">
+    <div class="section-inner">
+      <div class="reveal">
+        <div class="section-label">What We Do</div>
+        <div class="divider"></div>
+        <h2 class="section-h2">End-to-End Geospatial Services</h2>
+        <p class="section-sub">From raw satellite imagery to immersive decision environments — we handle the full analytical pipeline.</p>
+      </div>
+      <div class="services-grid reveal">
+        <div class="service-card">
+          <div class="service-icon">🛰️</div>
+          <div class="service-title">Satellite Image Analysis</div>
+          <div class="service-desc">Multi-temporal analysis using Sentinel-1/2, Landsat, MODIS. Land use change detection, vegetation indices (NDVI/EVI), land surface temperature, and spectral classification for climate monitoring.</div>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🌊</div>
+          <div class="service-title">Flood Risk & Hydrological Modelling</div>
+          <div class="service-desc">State-scale inundation mapping, flood extent delineation using SAR imagery, DEM-based drainage analysis, and disaster risk zoning for governments and insurers.</div>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🌡️</div>
+          <div class="service-title">Climate & Environmental Monitoring</div>
+          <div class="service-desc">Urban heat island mapping, air quality analysis via GEE, groundwater-LST interaction studies, and carbon stock assessment using optical and thermal remote sensing.</div>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🚁</div>
+          <div class="service-title">UAV Survey & Precision Mapping</div>
+          <div class="service-desc">High-resolution photogrammetry, 3D point cloud generation, orthomosaic production, and rapid deployment for emergency response and infrastructure inspection.</div>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🥽</div>
+          <div class="service-title">XR-based Spatial Visualization</div>
+          <div class="service-desc">AR/VR environments for geospatial decision-making — volumetric 3D model assessment inside VR, digital twin navigation, and immersive training simulations for field teams.</div>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🎓</div>
+          <div class="service-title">Capacity Building & Workshops</div>
+          <div class="service-desc">QGIS, Google Earth Engine, and XR training for government officials, urban planners, researchers, and academic institutions across India.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PROJECTS ===== -->
+  <section id="projects" class="section">
+    <div class="section-inner">
+      <div class="reveal">
+        <div class="section-label">Our Work</div>
+        <div class="divider"></div>
+        <h2 class="section-h2">Featured Projects</h2>
+        <p class="section-sub">Real-world engagements across climate, disaster response, and immersive technology.</p>
+      </div>
+
+      <div class="projects-grid">
+
+        <!-- FEATURED: Meghalaya Flood -->
+        <div class="project-card featured reveal" style="position:relative;">
+          <span class="project-tag tag-climate">Climate · Flagship</span>
+          <!-- Replace with your Meghalaya flood map image -->
+          <img src="images/meghalaya_flood.png" alt="Meghalaya Flood Modelling" class="project-img"
+               onerror="this.style.background='linear-gradient(135deg,#0a2236,#0c3d2e)';this.style.minHeight='320px';this.removeAttribute('src')" />
+          <div class="project-body">
+            <div class="project-client">State Government · Disaster Risk</div>
+            <div class="project-title">State-Scale Flood Inundation Modelling — Meghalaya</div>
+            <div class="project-desc">
+              Comprehensive flood risk assessment covering the entire state of Meghalaya using multi-source satellite data. Integrated Sentinel-1 SAR imagery for flood extent mapping, SRTM/ALOS DEM for terrain analysis, and hydrological modelling to delineate high-risk zones across river basins. Outputs included inundation depth maps, flood frequency zoning, and actionable risk layers for disaster management authorities.
+            </div>
+            <div class="project-meta">
+              <span class="project-chip">Sentinel-1 SAR</span>
+              <span class="project-chip">SRTM DEM</span>
+              <span class="project-chip">Google Earth Engine</span>
+              <span class="project-chip">Hydrological Modelling</span>
+              <span class="project-chip">Flood Risk Zoning</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chennai Floods UAV -->
+        <div class="project-card reveal">
+          <span class="project-tag tag-uav">UAV · Emergency Response</span>
+          <img src="images/uav_me_dharshan.png" alt="UAV Chennai Floods" class="project-img"
+               onerror="this.style.background='linear-gradient(135deg,#1a1200,#2a1a00)';this.style.minHeight='220px';this.removeAttribute('src')" />
+          <div class="project-body">
+            <div class="project-client">Bajaj Allianz · Insurance</div>
+            <div class="project-title">UAV Flood Survey — 2023 Chennai Floods</div>
+            <div class="project-desc">
+              Rapid deployment UAV mapping for post-flood damage assessment. Delivered high-resolution orthomosaics and 3D models enabling the client to quantify inundated areas and assess asset damage for insurance claims.
+            </div>
+            <div class="project-meta">
+              <span class="project-chip">UAV Photogrammetry</span>
+              <span class="project-chip">Orthomosaic</span>
+              <span class="project-chip">Damage Assessment</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Air Pollution GEE -->
+        <div class="project-card reveal">
+          <span class="project-tag tag-climate">Climate · Research</span>
+          <!-- Add an image: gee_air_pollution.png or similar -->
+          <img src="images/gee_air_pollution.png" alt="Air Pollution GEE" class="project-img"
+               onerror="this.style.background='linear-gradient(135deg,#12001a,#200a30)';this.style.minHeight='220px';this.removeAttribute('src')" />
+          <div class="project-body">
+            <div class="project-client">Research · Routledge India</div>
+            <div class="project-title">Urban Air Pollution Mapping — Google Earth Engine</div>
+            <div class="project-desc">
+              Mapped and analyzed spatial distribution of air pollution across Thiruvananthapuram city using Sentinel-5P and MODIS aerosol products on GEE. Identified seasonal hotspots and published findings in Routledge India's volume on disaster risk and resilient agriculture.
+            </div>
+            <div class="project-meta">
+              <span class="project-chip">Sentinel-5P</span>
+              <span class="project-chip">MODIS AOD</span>
+              <span class="project-chip">Google Earth Engine</span>
+              <span class="project-chip">Urban Climate</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- AR Indoor Nav -->
+        <div class="project-card reveal">
+          <span class="project-tag tag-xr">XR · Enterprise</span>
+          <img src="images/ARnav1.png" alt="AR Indoor Navigation" class="project-img"
+               onerror="this.style.background='linear-gradient(135deg,#001520,#001a2c)';this.style.minHeight='220px';this.removeAttribute('src')" />
+          <div class="project-body">
+            <div class="project-client">LTI Mindtree · Enterprise</div>
+            <div class="project-title">AR-based Indoor Navigation System</div>
+            <div class="project-desc">
+              Developed an AR indoor navigation module using Unity as Library for seamless Android & iOS integration. Deployed for enterprise campus navigation with real-time spatial overlay.
+            </div>
+            <div class="project-meta">
+              <span class="project-chip">Unity</span>
+              <span class="project-chip">ARCore / ARKit</span>
+              <span class="project-chip">Android · iOS</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- VR 3D Accuracy -->
+        <div class="project-card reveal">
+          <span class="project-tag tag-xr">XR · Research · ISPRS</span>
+          <img src="images/STORY1.png" alt="VR 3D Model Accuracy" class="project-img"
+               onerror="this.style.background='linear-gradient(135deg,#0d001a,#1a003a)';this.style.minHeight='220px';this.removeAttribute('src')" />
+          <div class="project-body">
+            <div class="project-client">ISPRS 2024 · Perth, Australia</div>
+            <div class="project-title">VR Tool for 3D Model Accuracy Assessment</div>
+            <div class="project-desc">
+              Patented system for measuring and editing 3D spatial vector data inside a VR environment. Presented at ISPRS TC IV Symposium 2024 (TIF Grant Awardee) — enabling immersive quality assessment of photogrammetric reconstructions.
+            </div>
+            <div class="project-meta">
+              <span class="project-chip">Unity VR</span>
+              <span class="project-chip">Photogrammetry</span>
+              <span class="project-chip">Patent</span>
+              <span class="project-chip">ISPRS Published</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PUBLICATIONS ===== -->
+  <section id="publications" class="section section-alt">
+    <div class="section-inner">
+      <div class="reveal">
+        <div class="section-label">Research & IP</div>
+        <div class="divider"></div>
+        <h2 class="section-h2">Publications, Patents & Awards</h2>
+        <p class="section-sub">Peer-reviewed research published in ISPRS, Taylor & Francis, Geocarto International, and Routledge.</p>
+      </div>
+
+      <!-- Patents -->
+      <div style="display:flex; flex-direction:column; gap:1rem; margin-top:2.5rem;" class="reveal">
+        <div class="patent-card">
+          <div class="patent-icon">🏛️</div>
+          <div>
+            <div style="font-size:0.68rem; color:var(--teal); letter-spacing:0.1em; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Patent</div>
+            <div class="patent-title">System and Method for Creating and Editing Three-Dimensional Spatial Vector Data in Virtual Reality Environment</div>
+          </div>
+        </div>
+        <div class="patent-card">
+          <div class="patent-icon">🏛️</div>
+          <div>
+            <div style="font-size:0.68rem; color:var(--teal); letter-spacing:0.1em; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Patent</div>
+            <div class="patent-title">System and Method for Measurements on a 3D Real-World Reconstructed Model in an Immersive Virtual Environment</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Publications grid -->
+      <div class="pub-grid reveal">
+        <div class="pub-card">
+          <div class="pub-type">ISPRS Annals 2024</div>
+          <div class="pub-title">A Virtual Reality Tool for Accuracy Assessment of 3D Models in an Immersive Virtual Environment</div>
+          <div class="pub-meta">Subramaniyam, B., Shylesh, D., Ramasamy, J., & Kumar, N. — ISPRS Ann. Photogramm. Remote Sens. Spatial Inf. Sci., X-4-2024</div>
+          <a href="https://doi.org/10.5194/isprs-annals-X-4-2024-333-2024" target="_blank" class="pub-link">→ View DOI</a>
+        </div>
+
+        <div class="pub-card">
+          <div class="pub-type">Taylor & Francis · Book Chapter</div>
+          <div class="pub-title">Real-time Computation of Precipitable Water Vapor from GPS Data</div>
+          <div class="pub-meta">S Bala Subramaniyam, Reshma Raskar-Phule — GNSS Applications in Earth and Space Observations</div>
+          <a href="https://doi.org/10.1201/9781032712444-18" target="_blank" class="pub-link">→ View DOI</a>
+        </div>
+
+        <div class="pub-card">
+          <div class="pub-type">Routledge India 2024</div>
+          <div class="pub-title">Mapping and Analyzing Air Pollution using Google Earth Engine — Thiruvananthapuram City</div>
+          <div class="pub-meta">Subramaniyam, S. B., & Sabirul, S. — In: Disaster Risk, Resilient Agriculture and Livelihood</div>
+        </div>
+
+        <div class="pub-card">
+          <div class="pub-type">Geocarto International 2022</div>
+          <div class="pub-title">A Localized Counter-based Filtering Approach for Generating Digital Terrain Model</div>
+          <div class="pub-meta">Jaganathan, R., Shylesh D. S., & John, J. — Geocarto International, 37(26), 13229–13247</div>
+          <a href="https://doi.org/10.1080/10106049.2022.2076920" target="_blank" class="pub-link">→ View DOI</a>
+        </div>
+
+        <div class="pub-card">
+          <div class="pub-type">SECON 2021 · Lecture Notes in Civil Engineering</div>
+          <div class="pub-title">Mapping of Soil Moisture Index Using Optical and Thermal Remote Sensing</div>
+          <div class="pub-meta">John, J., Jaganathan, R., Dharshan Shylesh, D.S. — LNCE vol 171</div>
+          <a href="https://doi.org/10.1007/978-3-030-80312-4_65" target="_blank" class="pub-link">→ View DOI</a>
+        </div>
+
+        <div class="pub-card">
+          <div class="pub-type">Applied Geomatics 2023</div>
+          <div class="pub-title">Influence of Ground Control Points on UAV Positional Accuracy</div>
+          <div class="pub-meta">D. S. et al. — Applied Geomatics (Springer)</div>
+          <a href="https://doi.org/10.1007/s12518-023-00531-w" target="_blank" class="pub-link">→ View DOI</a>
+        </div>
+
+        <div class="pub-card">
+          <div class="pub-type">CRC Press · Taylor & Francis · In Review</div>
+          <div class="pub-title">Assessing Urban Water Stream Pollution by Using Geospatial Technologies</div>
+          <div class="pub-meta">Richard D'Silva, S Bala Subramaniyam, Reshma Raskar-Phule — Book chapter submitted</div>
+        </div>
+
+        <div class="pub-card">
+          <div class="pub-type">Journal of Civil Engineering Interdisciplinaries 2021</div>
+          <div class="pub-title">Planning and Mapping of a Multi Modal Integrated Transportation System — Dadar Metro Station</div>
+          <div class="pub-meta">S Bala Subramaniyam, Reshma Raskar-Phule — Vol 2(2):7–17</div>
+        </div>
+      </div>
+
+      <!-- Awards -->
+      <div class="reveal" style="margin-top:3rem;">
+        <div style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-bottom:1rem;">Awards & Recognition</div>
+        <div class="awards-row">
+          <div class="award-pill"><span class="aw-icon">🥇</span> Best Poster — ISG-ISRS National Symposium, Pune (Nov 2023)</div>
+          <div class="award-pill"><span class="aw-icon">🥈</span> 2nd Prize — DST Geo-Innovation Challenge, Anna University (Jul 2024)</div>
+          <div class="award-pill"><span class="aw-icon">✈️</span> TIF Grant Awardee — ISPRS TC IV Symposium, Perth, Australia (Oct 2024)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== WORKSHOPS ===== -->
+  <section id="workshops" class="section">
+    <div class="section-inner">
+      <div class="reveal">
+        <div class="section-label">Training & Outreach</div>
+        <div class="divider"></div>
+        <h2 class="section-h2">Workshops & Capacity Building</h2>
+        <p class="section-sub">Hands-on training delivered to engineers, planners, and researchers across India.</p>
+      </div>
+
+      <div class="workshop-scroll reveal">
+        <div class="workshop-card">
+          <img src="images/workshop_iist2.png" alt="IIST Workshop"
+               onerror="this.style.background='var(--surface2)';this.style.minHeight='170px';this.removeAttribute('src')" />
+          <div class="workshop-body">
+            <div class="workshop-inst">IIST Trivandrum</div>
+            <div class="workshop-title">Geospatial Analysis through XR</div>
+            <div class="workshop-meta">Unity, Cesium & Mapbox hands-on · April 24–25, 2025</div>
+          </div>
+        </div>
+
+        <div class="workshop-card">
+          <img src="images/workshop_SPCE_3.PNG" alt="SPCE Workshop"
+               onerror="this.style.background='var(--surface2)';this.style.minHeight='170px';this.removeAttribute('src')" />
+          <div class="workshop-body">
+            <div class="workshop-inst">Sardar Patel College of Engineering</div>
+            <div class="workshop-title">Google Earth Engine — Sustainable Urban Infrastructure</div>
+            <div class="workshop-meta">AICTE-ATAL Program · Climate Change · May 2025</div>
+          </div>
+        </div>
+
+        <div class="workshop-card">
+          <img src="images/WORKSHOP_bvp.png" alt="BVP Workshop"
+               onerror="this.style.background='var(--surface2)';this.style.minHeight='170px';this.removeAttribute('src')" />
+          <div class="workshop-body">
+            <div class="workshop-inst">Bharati Vidyapeeth Deemed University</div>
+            <div class="workshop-title">Extended Reality & Geoinformatics</div>
+            <div class="workshop-meta">Institute of Environment Education & Research · Sep 2024</div>
+          </div>
+        </div>
+
+        <div class="workshop-card">
+          <img src="images/WORKSHOP_ANNAUNIVERSITY.PNG" alt="Anna University Workshop"
+               onerror="this.style.background='var(--surface2)';this.style.minHeight='170px';this.removeAttribute('src')" />
+          <div class="workshop-body">
+            <div class="workshop-inst">Anna University</div>
+            <div class="workshop-title">QGIS for Land Records & Urban Planning</div>
+            <div class="workshop-meta">Land record managers, urban planners & water resource officials · June 2024</div>
+          </div>
+        </div>
+
+        <div class="workshop-card">
+          <img src="images/WORKSHOP1.png" alt="SIMATS Workshop"
+               onerror="this.style.background='var(--surface2)';this.style.minHeight='170px';this.removeAttribute('src')" />
+          <div class="workshop-body">
+            <div class="workshop-inst">SIMATS</div>
+            <div class="workshop-title">Immersive Engineering: Intro to Virtual Reality</div>
+            <div class="workshop-meta">Hands-on VR for engineering students · Feb 2025</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MEDIA ===== -->
+  <section id="media" class="section section-alt">
+    <div class="section-inner">
+      <div class="reveal">
+        <div class="section-label">Gallery</div>
+        <div class="divider"></div>
+        <h2 class="section-h2">Visualising Our Impact</h2>
+      </div>
+      <div class="media-grid reveal">
+        <div class="media-item">
+          <img src="images/DST_AWARD_1.PNG" alt="DST Award" />
+          <div class="media-overlay">🔍</div>
+        </div>
+        <div class="media-item">
+          <img src="images/DST_AWARD.PNG" alt="DST Award" />
+          <div class="media-overlay">🔍</div>
+        </div>
+        <div class="media-item">
+          <img src="images/uav_me_dharshan.png" alt="UAV Mapping" />
+          <div class="media-overlay">🔍</div>
+        </div>
+        <div class="media-item">
+          <img src="images/team1.png" alt="Team" />
+          <div class="media-overlay">🔍</div>
+        </div>
+        <div class="media-item">
+          <img src="images/UAV3.jpg" alt="UAV" />
+          <div class="media-overlay">🔍</div>
+        </div>
+        <div class="media-item">
+          <img src="images/WORKSHOP_bvp2.png" alt="Workshop" />
+          <div class="media-overlay">🔍</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TEAM ===== -->
+  <section id="team" class="section">
+    <div class="section-inner">
+      <div class="reveal">
+        <div class="section-label">The Team</div>
+        <div class="divider"></div>
+        <h2 class="section-h2">Meet the Founders</h2>
+      </div>
+      <div class="team-grid">
+        <div class="team-card reveal">
+          <img src="images/bala.png" alt="S. Bala Subramaniyam" class="team-avatar"
+               onerror="this.style.background='var(--surface)';this.removeAttribute('src')" />
+          <div class="team-name">S. Bala Subramaniyam</div>
+          <div class="team-role">XR Developer · GIS Specialist · Co-Founder</div>
+          <div class="team-bio">
+            Merging geospatial intelligence with immersive technologies. Expertise in Google Earth Engine, QGIS, AR/VR pipelines, satellite image analysis, and climate risk modelling. Published researcher and patent holder.
+          </div>
+        </div>
+        <div class="team-card reveal">
+          <img src="images/dharshan.jpg" alt="Dharshan Shylesh" class="team-avatar"
+               onerror="this.style.background='var(--surface)';this.removeAttribute('src')" />
+          <div class="team-name">Dharshan Shylesh</div>
+          <div class="team-role">XR Developer · Researcher · Co-Founder</div>
+          <div class="team-bio">
+            Specializes in immersive visualization of remote sensing data and 3D model accuracy assessment inside VR environments. ISPRS 2024 presenter and TIF Grant Awardee. UAV photogrammetry expert.
+          </div>
+        </div>
+        <div class="team-card reveal">
+          <img src="images/d.JPG" alt="Darwin Thankapan" class="team-avatar"
+               onerror="this.style.background='var(--surface)';this.removeAttribute('src')" />
+          <div class="team-name">Darwin Thankapan</div>
+          <div class="team-role">Co-Founder · Designated Partner</div>
+          <div class="team-bio">
+            30+ years of experience in civil engineering and construction. Brings deep domain knowledge in infrastructure, site assessment, and project delivery to CartoXR's geospatial field operations.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section id="contact" class="section section-alt">
+    <div class="section-inner">
+      <div class="contact-wrap">
+        <div class="reveal">
+          <div class="section-label">Get in Touch</div>
+          <div class="divider"></div>
+          <h2 class="section-h2">Let's Work Together</h2>
+          <p class="section-sub">
+            Available for climate analysis projects, satellite image analysis, flood risk modelling, UAV surveys, XR visualization, and workshop engagements. We work with government agencies, NGOs, research institutions, and industry.
+          </p>
+          <div class="contact-links">
+            <a href="mailto:shylesh@cartoxr.com" class="contact-item">
+              <span class="contact-item-icon">📧</span>
+              <div>
+                <div class="contact-item-label">Email</div>
+                <div class="contact-item-val">shylesh@cartoxr.com</div>
+              </div>
+            </a>
+            <a href="https://www.linkedin.com/company/cartoxr/" target="_blank" class="contact-item">
+              <span class="contact-item-icon">💼</span>
+              <div>
+                <div class="contact-item-label">LinkedIn</div>
+                <div class="contact-item-val">linkedin.com/company/cartoxr</div>
+              </div>
+            </a>
+            <a href="https://www.youtube.com/@TheVirtualBlackboard-zh6xk" target="_blank" class="contact-item">
+              <span class="contact-item-icon">▶️</span>
+              <div>
+                <div class="contact-item-label">YouTube</div>
+                <div class="contact-item-val">The Virtual Blackboard</div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <div class="contact-card reveal">
+          <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--teal); margin-bottom:1rem;">Areas of Collaboration</div>
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; align-items:center; gap:10px; font-size:0.88rem; color:var(--text);">
+              <span style="color:var(--teal);">✓</span> Climate & disaster risk analysis
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; font-size:0.88rem; color:var(--text);">
+              <span style="color:var(--teal);">✓</span> Satellite image processing & GEE workflows
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; font-size:0.88rem; color:var(--text);">
+              <span style="color:var(--teal);">✓</span> Flood inundation & hydrological modelling
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; font-size:0.88rem; color:var(--text);">
+              <span style="color:var(--teal);">✓</span> UAV surveys for emergency response
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; font-size:0.88mm; color:var(--text);">
+              <span style="color:var(--teal);">✓</span> AR/VR spatial visualization tools
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; font-size:0.88rem; color:var(--text);">
+              <span style="color:var(--teal);">✓</span> GIS training workshops & capacity building
+            </div>
+          </div>
+          <a href="CartoXR_Brochure.pdf" download
+             style="display:inline-block; margin-top:2rem; padding:12px 28px; border-radius:999px; background:linear-gradient(135deg,var(--teal),var(--blue)); color:#04080f; font-weight:700; font-size:0.85rem; text-decoration:none;">
+            📄 Download Company Brochure
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <img src="images/logo.png" alt="CartoXR" style="height:36px; margin-bottom:12px; opacity:0.7;" />
+    <div style="margin-bottom:8px;">© 2025 CartoXR · All Rights Reserved</div>
+    <div>
+      <a href="mailto:shylesh@cartoxr.com">shylesh@cartoxr.com</a>
+      &nbsp;·&nbsp;
+      <a href="https://www.linkedin.com/company/cartoxr/" target="_blank">LinkedIn</a>
+      &nbsp;·&nbsp;
+      Chennai, India
+    </div>
   </footer>
 
-  <!-- SCRIPTS -->
+  <!-- ===== SCRIPTS ===== -->
   <script>
-    // Open video modal with chosen file (assumes mp4 files exist under images/)
-    function openVideoModal(filename, poster) {
-      const modal = document.getElementById('videoModal');
-      const player = document.getElementById('modal-player');
-      const source = document.getElementById('modalSource');
-
-      // prefer mp4; user provided file list includes mp4 and mov; we try .mp4 first
-      source.src = 'images/' + filename;
-      player.load();
-      modal.classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeVideoModal(){
-      const modal = document.getElementById('videoModal');
-      const player = document.getElementById('modal-player');
-      player.pause();
-      player.currentTime = 0;
-      modal.classList.add('hidden');
-      document.body.style.overflow = '';
-    }
-
-    // Close modal on Esc
-    document.addEventListener('keydown', (e) => {
-      if(e.key === 'Escape') closeVideoModal();
-    });
-
-    // Small reveal on scroll for sections
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if(entry.isIntersecting){
-          entry.target.classList.add('opacity-100','translate-y-0');
-          entry.target.classList.remove('opacity-0','-translate-y-6');
+    // Scroll reveal
+    const revealEls = document.querySelectorAll('.reveal');
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          // stagger within a group
+          const delay = Array.from(e.target.parentElement?.children || []).indexOf(e.target) * 80;
+          setTimeout(() => e.target.classList.add('visible'), Math.min(delay, 300));
+          obs.unobserve(e.target);
         }
       });
-    }, { threshold: 0.12 });
+    }, { threshold: 0.1 });
+    revealEls.forEach(el => obs.observe(el));
 
-    document.querySelectorAll('section').forEach(sec => {
-      sec.classList.add('opacity-0','-translate-y-6','transition','duration-700','ease-out');
-      observer.observe(sec);
+    // Nav highlight on scroll
+    const sections = document.querySelectorAll('section[id], header[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    const scrollObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(a => {
+            a.style.color = a.getAttribute('href') === '#' + entry.target.id ? 'var(--teal)' : '';
+          });
+        }
+      });
+    }, { threshold: 0.4 });
+    sections.forEach(s => scrollObs.observe(s));
+
+    // Nav background on scroll
+    window.addEventListener('scroll', () => {
+      document.querySelector('nav').style.background =
+        window.scrollY > 60 ? 'rgba(4,8,15,0.95)' : 'rgba(4,8,15,0.82)';
     });
   </script>
+
 </body>
 </html>
-
-
-
-
-
-
-
-
 
 
 
