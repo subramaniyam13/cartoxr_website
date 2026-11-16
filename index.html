@@ -1,52 +1,664 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CARTOXR · Geospatial intelligence &amp; immersive XR</title>
-<meta name="description" content="CARTOXR: geospatial intelligence and immersive experiences. GIS, remote sensing, AR/VR and digital twins from Chennai, India.">
-<script>(function(){try{var t=localStorage.getItem('cx-theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t;}catch(e){}})();</script>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&family=Montserrat:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="assets/site.css">
+<meta name="description" content="CARTOXR Research Centre and Consultancy LLP, Chennai. GIS and remote sensing first, then AR, VR and digital twins that people can walk through and decide with.">
+<meta property="og:title" content="CARTOXR · GIS &amp; XR">
+<meta property="og:description" content="Geospatial intelligence and immersive experiences, from Chennai.">
+<meta property="og:image" content="assets/hero.jpg">
+<link rel="icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF; --surface:#F2FAFB; --ink:#102E38; --body:#42606A; --line:#DBEAF0; --line2:#BFDCE4;
+  --sapphire:#006D82; --azure:#008DA8; --sky:#2BB6CF; --ice:#8BE3F2; --tint:#E7F6F9;
+  --midnight:#062A33; --panel:#0A3B47; --foot:#00596C;
+  --display:"Bebas Neue","Oswald","Arial Narrow",Impact,sans-serif;
+  --text:"Montserrat","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --max:1280px; --gut:max(18px,3vw); --ease:cubic-bezier(.22,.61,.36,1);
+  --shadow:0 1px 2px rgba(6,42,51,.06),0 18px 40px -22px rgba(6,42,51,.45);
+}
+:root[data-theme=dark]{
+  --bg:#071C23; --surface:#0A2A33; --ink:#EAF6F8; --body:#A9D4DE; --line:#16414D; --line2:#1F5666;
+  --sapphire:#2BB6CF; --tint:#0B3440; --foot:#04141A;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:76px}
+body{font-family:var(--text);color:var(--body);background:var(--bg);line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .3s,color .3s}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--gut)}
+section{padding:110px 0;position:relative}
+h1,h2,h3{font-family:var(--display);font-weight:400;color:var(--ink);line-height:.95;text-transform:uppercase;letter-spacing:.01em}
+h2{font-size:clamp(54px,9vw,120px)}
+h2 em,h1 em{font-style:normal;color:var(--sapphire)}
+h3{font-size:30px;line-height:1.05}
+.mono{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--sapphire)}
+.lead{font-size:18px;max-width:58ch;margin-top:22px}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;flex-wrap:wrap;margin-bottom:56px;border-bottom:1px solid var(--line2);padding-bottom:30px}
+.sec-head .lead{margin:0;max-width:44ch}
+
+/* progress + cursor */
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--azure),var(--ice));z-index:200}
+.cur,.cur-dot{position:fixed;top:0;left:0;pointer-events:none;z-index:300;opacity:0;transition:opacity .25s}
+.cur{width:44px;height:44px;margin:-22px 0 0 -22px;border:1.5px solid var(--azure);border-radius:50%;display:grid;place-items:center;
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:#fff;transition:width .25s var(--ease),height .25s var(--ease),margin .25s var(--ease),background .25s,opacity .25s,border-color .25s}
+.cur-dot{width:7px;height:7px;margin:-3.5px 0 0 -3.5px;background:var(--azure);border-radius:50%}
+body.has-cur .cur,body.has-cur .cur-dot{opacity:1}
+body.has-cur,body.has-cur a,body.has-cur button,body.has-cur summary{cursor:none}
+body.has-cur input,body.has-cur textarea,body.has-cur select{cursor:text}
+.cur.link{width:76px;height:76px;margin:-38px 0 0 -38px;background:rgba(43,182,207,.18);border-color:var(--sky)}
+.cur.view{width:96px;height:96px;margin:-48px 0 0 -48px;background:var(--azure);border-color:var(--azure)}
+.cur.down{transform:scale(.8)}
+.cur.hide,.cur.hide~.cur-dot{opacity:0!important}
+.trail{position:fixed;pointer-events:none;z-index:299;width:10px;height:10px;border-radius:50%;background:var(--sky);opacity:.5;transform:translate(-50%,-50%) scale(1);animation:fade .7s forwards}
+@keyframes fade{to{opacity:0;transform:translate(-50%,-50%) scale(.1)}}
+
+/* nav */
+header.nav{position:fixed;inset:0 0 auto 0;z-index:100;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line2);transition:transform .3s var(--ease)}
+header.nav.hide{transform:translateY(-100%)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:68px;gap:20px}
+.logo img{height:38px;width:auto}
+.logo .l-w{display:none}
+:root[data-theme=dark] .logo .l-d{display:none}
+:root[data-theme=dark] .logo .l-w{display:block}
+.links{display:flex;gap:2px;font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase}
+.links a{padding:8px 14px;color:var(--ink);position:relative}
+.links a::after{content:"";position:absolute;left:14px;right:14px;bottom:2px;height:2px;background:var(--azure);transform:scaleX(0);transform-origin:left;transition:transform .3s var(--ease)}
+.links a:hover::after,.links a.on::after{transform:scaleX(1)}
+.links a.on{color:var(--sapphire)}
+.nav-r{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:12px}
+.theme{width:38px;height:38px;border:1px solid var(--line2);border-radius:50%;display:grid;place-items:center;transition:.2s}
+.theme:hover{border-color:var(--azure);transform:rotate(25deg)}
+.burger{display:none;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:10px;padding:15px 30px;border-radius:999px;font-weight:600;font-size:14px;letter-spacing:.04em;border:1.5px solid var(--sapphire);transition:background .25s,color .25s,transform .2s;will-change:transform}
+.btn.fill{background:var(--sapphire);color:#fff}
+.btn.fill:hover{background:var(--ink);border-color:var(--ink)}
+.btn.line{color:var(--sapphire)}
+.btn.line:hover{background:var(--sapphire);color:#fff}
+.btn.white{background:#fff;color:var(--foot);border-color:#fff}
+.btn.white:hover{background:var(--ice);border-color:var(--ice)}
+
+/* hero */
+.hero{min-height:100vh;padding:130px 0 70px;display:flex;align-items:center;overflow:hidden;background:linear-gradient(180deg,var(--bg),var(--surface))}
+#net{position:absolute;inset:0;width:100%;height:100%}
+.hero .wrap{position:relative;z-index:2;width:100%}
+.hero h1{font-size:clamp(96px,22vw,330px);line-height:.82;letter-spacing:.005em;display:flex;flex-wrap:wrap;user-select:none}
+.hero h1 .ch{display:inline-block;transition:transform .15s linear;will-change:transform}
+.hero h1 .xr{background:linear-gradient(120deg,var(--sapphire),var(--sky));-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-flex}
+.hero-row{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:40px;margin-top:46px;padding-top:30px;border-top:1px solid var(--line2);align-items:start}
+.hero-row p{font-size:19px;color:var(--ink);max-width:36ch}
+.hero-row p b{color:var(--sapphire);font-weight:600}
+.hero-row ul{list-style:none;font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;line-height:2.1;margin-top:10px}
+.hero-row li span{color:var(--sapphire)}
+.hero .cta{margin-top:34px;display:flex;gap:14px;flex-wrap:wrap}
+.scroll{position:absolute;bottom:26px;right:var(--gut);z-index:2;font-family:var(--mono);font-size:11px;letter-spacing:.2em;writing-mode:vertical-rl;color:var(--sapphire);display:flex;align-items:center;gap:12px}
+.scroll::after{content:"";width:1px;height:50px;background:var(--sapphire);animation:drip 1.8s infinite}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* marquee */
+.marq{background:var(--midnight);color:var(--ice);overflow:hidden;padding:20px 0;border-block:1px solid var(--panel)}
+.marq div{display:flex;gap:56px;width:max-content;animation:mq 38s linear infinite;font-family:var(--display);font-size:34px;letter-spacing:.06em;text-transform:uppercase}
+.marq:hover div{animation-play-state:paused}
+.marq span::after{content:"✦";margin-left:56px;color:var(--azure);font-size:20px}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* stats */
+.stats{padding:70px 0;background:var(--bg)}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.stat{padding:10px 30px;border-left:1px solid var(--line2)}
+.stat:first-child{border-left:0;padding-left:0}
+.stat b{display:block;font-family:var(--display);font-weight:400;font-size:clamp(60px,8vw,110px);line-height:.95;color:var(--ink)}
+.stat b small{font-size:.4em;color:var(--sapphire)}
+.stat span{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--sapphire)}
+
+/* work */
+.feat{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:70px}
+.fc{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:4/5;background:var(--midnight);color:#fff;transform-style:preserve-3d;box-shadow:var(--shadow);transition:transform .2s ease-out}
+.fc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
+.fc:hover img{transform:scale(1.08)}
+.fc::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,42,51,.05) 35%,rgba(6,42,51,.92));}
+.fc .t{position:absolute;left:20px;right:20px;bottom:20px;z-index:2;transform:translateZ(40px)}
+.fc .t .mono{color:var(--ice)}
+.fc h3{color:#fff;font-size:30px;margin:6px 0 4px}
+.fc p{font-size:13px;color:#cfe5ea;line-height:1.5}
+.fc .glare{position:absolute;inset:0;z-index:3;pointer-events:none;background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.28),transparent 55%);opacity:0;transition:opacity .3s}
+.fc:hover .glare{opacity:1}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.tab{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;border:1px solid var(--line2);border-radius:999px;color:var(--ink);transition:.2s}
+.tab:hover{border-color:var(--azure)}
+.tab.on{background:var(--sapphire);border-color:var(--sapphire);color:#fff}
+.idx{width:100%;border-collapse:collapse}
+.idx th{text-align:left;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--sapphire);font-weight:500;padding:14px 10px;border-bottom:1px solid var(--ink)}
+.idx td{padding:22px 10px;border-bottom:1px solid var(--line);vertical-align:middle;transition:background .25s,padding .25s var(--ease)}
+.idx tr.row{position:relative}
+.idx tr.row:hover td{background:var(--tint);}
+.idx tr.row:hover td.n{padding-left:20px}
+.idx td.n{font-family:var(--mono);color:var(--sapphire);font-size:13px;width:70px}
+.idx td.p{font-family:var(--display);font-size:clamp(26px,3.4vw,44px);line-height:1;color:var(--ink);text-transform:uppercase}
+.idx td.p i{font-style:normal;font-family:var(--mono);font-size:10px;letter-spacing:.14em;vertical-align:middle;margin-left:10px;padding:3px 8px;border:1px solid var(--azure);border-radius:99px;color:var(--azure)}
+.idx td.c,.idx td.d,.idx td.y{font-size:14px}
+.idx td.y{font-family:var(--mono);text-align:right;white-space:nowrap}
+.idx tr.gone{display:none}
+.peek{position:fixed;top:0;left:0;width:300px;aspect-ratio:4/3;border-radius:12px;overflow:hidden;pointer-events:none;z-index:150;box-shadow:0 30px 60px -20px rgba(6,42,51,.6);opacity:0;transform:scale(.85);transition:opacity .2s,transform .25s var(--ease);background:var(--midnight)}
+.peek.on{opacity:1;transform:scale(1)}
+.peek img{width:100%;height:100%;object-fit:cover}
+.peek.contain img{object-fit:contain;background:#0b2a33}
+
+/* dark sections */
+.dark{background:var(--midnight);color:var(--muted-d,#A9D4DE);overflow:hidden}
+.dark h2,.dark h3{color:#fff}
+.dark h2 em{color:var(--ice)}
+.dark .mono{color:var(--ice)}
+.dark .sec-head{border-color:rgba(139,227,242,.22)}
+.spot::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(520px circle at var(--mx,50%) var(--my,30%),rgba(43,182,207,.2),transparent 60%);opacity:var(--so,0);transition:opacity .4s}
+
+/* practice */
+.disc{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.dc{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:30px 26px 26px;position:relative;overflow:hidden;transition:transform .3s var(--ease),border-color .3s,box-shadow .3s}
+.dc:hover{transform:translateY(-6px);border-color:var(--azure);box-shadow:var(--shadow)}
+.dc .no{font-family:var(--mono);font-size:12px;color:var(--sapphire);letter-spacing:.14em}
+.dc h3{margin:14px 0 10px;font-size:36px}
+.dc p{font-size:14.5px}
+.dc ul{list-style:none;margin-top:18px;border-top:1px solid var(--line2)}
+.dc li{padding:9px 0;font-size:13.5px;border-bottom:1px solid var(--line);color:var(--ink);font-weight:500;display:flex;justify-content:space-between;gap:10px;transition:padding .25s}
+.dc li::after{content:"→";color:var(--azure);opacity:0;transition:.25s}
+.dc li:hover{padding-left:8px}
+.dc li:hover::after{opacity:1}
+.twin{display:grid;grid-template-columns:1fr 1.15fr;gap:60px;align-items:center}
+.twin .lead{color:#A9D4DE}
+.twin ul{list-style:none;margin-top:26px;display:grid;gap:12px}
+.twin li{display:flex;gap:14px;font-size:15px;color:#d8edf1}
+.twin li b{font-family:var(--mono);color:var(--ice);font-weight:500;min-width:30px}
+.twin .imgs{position:relative;aspect-ratio:1.25;perspective:900px}
+.twin .imgs img{position:absolute;border-radius:12px;box-shadow:0 30px 60px -24px #000;object-fit:cover;transition:transform .3s ease-out}
+.twin .i1{width:78%;top:0;left:0}
+.twin .i2{width:58%;bottom:0;right:0;border:4px solid var(--midnight)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;counter-reset:s}
+.step{padding:30px 26px 30px 0;border-top:2px solid var(--line2);position:relative;transition:border-color .3s}
+.step:hover{border-color:var(--azure)}
+.step::before{counter-increment:s;content:"0" counter(s);font-family:var(--mono);color:var(--sapphire);font-size:13px}
+.step h3{font-size:44px;margin:10px 0 8px}
+.step p{font-size:14.5px;max-width:26ch}
+.sectors{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--line2)}
+.sector{padding:30px 28px 30px 0;border-bottom:1px solid var(--line2);transition:background .25s,padding .3s var(--ease)}
+.sector:hover{background:var(--tint);padding-left:18px}
+.sector h3{font-size:30px;margin-bottom:6px}
+.sector p{font-size:14px}
+.sub{font-family:var(--display);font-size:clamp(40px,5vw,64px);color:var(--ink);text-transform:uppercase;margin:90px 0 30px;line-height:1}
+
+/* journey */
+.tl{position:relative;margin-left:8px;padding-left:46px}
+.tl::before{content:"";position:absolute;left:0;top:6px;bottom:0;width:2px;background:var(--line2)}
+.tl .fill{position:absolute;left:0;top:6px;width:2px;height:0;background:linear-gradient(var(--azure),var(--ice));box-shadow:0 0 14px var(--sky)}
+.yr{font-family:var(--display);font-size:clamp(60px,8vw,110px);color:var(--sapphire);line-height:.9;margin:20px 0 14px;opacity:.9}
+.ev{position:relative;padding:18px 0 22px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:230px 1fr;gap:30px;transition:padding .3s var(--ease)}
+.ev::before{content:"";position:absolute;left:-52px;top:28px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--line2);transition:.3s}
+.ev.lit::before{background:var(--azure);border-color:var(--azure);box-shadow:0 0 0 6px rgba(0,141,168,.18)}
+.ev:hover{padding-left:12px}
+.ev .dt{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--sapphire);text-transform:uppercase;padding-top:6px}
+.ev h3{font-size:34px;margin-bottom:4px}
+.ev h3 i{font-style:normal;font-family:var(--mono);font-size:10px;letter-spacing:.14em;margin-left:10px;padding:3px 9px;background:var(--azure);color:#fff;border-radius:99px;vertical-align:middle}
+.ev p{font-size:14.5px;max-width:64ch}
+
+/* research */
+.protos{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.pc{background:var(--panel);border:1px solid rgba(139,227,242,.15);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:transform .3s var(--ease),border-color .3s}
+.pc:hover{transform:translateY(-6px);border-color:var(--sky)}
+.pc .im{aspect-ratio:4/3;background:linear-gradient(135deg,#0E4C5B,#06222a);display:grid;place-items:center;overflow:hidden}
+.pc .im img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
+.pc:hover .im img{transform:scale(1.07)}
+.pc .im span{font-family:var(--display);font-size:60px;color:rgba(139,227,242,.35)}
+.pc .b{padding:22px}
+.pc h3{font-size:30px;margin:6px 0 8px}
+.pc p{font-size:13.5px;color:#b9d7dd;line-height:1.6}
+.pub{display:grid;grid-template-columns:1fr 1fr;gap:56px}
+.pubs{list-style:none}
+.pubs li{padding:22px 0;border-bottom:1px solid rgba(139,227,242,.2);transition:padding .3s var(--ease)}
+.pubs li:hover{padding-left:12px}
+.pubs h4{font-family:var(--text);font-size:16px;color:#fff;font-weight:600;line-height:1.4;margin:6px 0 4px}
+.pubs p{font-size:13px;color:#a9d4de;line-height:1.6}
+.pubs a{color:var(--ice);border-bottom:1px solid currentColor;font-size:13px}
+.ip{margin-top:30px}
+.ip .box{border:1px solid rgba(139,227,242,.25);border-radius:12px;padding:20px 22px;margin-top:14px;transition:.3s}
+.ip .box:hover{border-color:var(--sky);background:rgba(43,182,207,.08)}
+.ip .box b{display:block;color:#fff;font-weight:600;font-size:14.5px;line-height:1.4}
+.ip .box span{font-family:var(--mono);font-size:12px;color:var(--ice)}
+.clients{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+.clients span{padding:12px 22px;border:1px solid rgba(139,227,242,.3);border-radius:99px;color:#eaf6f8;font-weight:500;font-size:14px;transition:.25s}
+.clients span:hover{background:var(--ice);color:var(--midnight);transform:translateY(-3px)}
+
+/* about */
+.about-top{display:grid;grid-template-columns:1fr 1.3fr;gap:70px}
+.about-top h3{font-size:clamp(40px,5vw,66px);line-height:.95}
+.about-top p{margin-bottom:18px;font-size:16.5px}
+.fig{margin-top:30px;border-radius:14px;overflow:hidden;position:relative}
+.fig img{width:100%;max-height:480px;object-fit:cover;object-position:center 60%;transition:transform .8s var(--ease)}
+.fig:hover img{transform:scale(1.04)}
+.fig figcaption{font-family:var(--mono);font-size:11px;letter-spacing:.1em;padding:10px 0;color:var(--sapphire)}
+.team{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:20px}
+.member{display:grid;grid-template-columns:200px 1fr;gap:26px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;transition:transform .3s var(--ease),border-color .3s,box-shadow .3s}
+.member:hover{transform:translateY(-6px);border-color:var(--azure);box-shadow:var(--shadow)}
+.member .ph{aspect-ratio:1;border-radius:12px;overflow:hidden;position:relative}
+.member .ph img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
+.member:hover .ph img{transform:scale(1.08)}
+.member .tagc{position:absolute;left:10px;bottom:10px;font-family:var(--display);font-size:28px;line-height:1;background:var(--midnight);color:var(--ice);padding:6px 12px 3px;border-radius:6px;letter-spacing:.04em}
+.member h3{font-size:40px;margin:2px 0 6px}
+.member p{font-size:14.5px}
+.member a{display:inline-block;margin-top:12px;font-family:var(--mono);font-size:12px;color:var(--sapphire);border-bottom:1px solid currentColor;word-break:break-all}
+
+/* faq */
+.faq details{border-bottom:1px solid var(--line2)}
+.faq summary{list-style:none;padding:26px 0;font-family:var(--display);font-size:clamp(26px,3.2vw,40px);color:var(--ink);text-transform:uppercase;display:flex;justify-content:space-between;gap:20px;line-height:1.05;transition:color .2s,padding .3s var(--ease)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-size:44px;line-height:.8;color:var(--sapphire);transition:transform .3s var(--ease)}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq summary:hover{color:var(--sapphire);padding-left:12px}
+.faq .ans{padding:0 0 28px;max-width:72ch;font-size:15.5px;animation:fd .4s var(--ease)}
+@keyframes fd{from{opacity:0;transform:translateY(-8px)}}
+
+/* contact */
+.contact{background:linear-gradient(135deg,var(--foot),var(--sapphire));color:#d6f0f5;overflow:hidden}
+.contact h2{color:#fff}
+.contact h2 em{color:var(--ice)}
+.contact .mono{color:var(--ice)}
+.c-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:70px;margin-top:20px}
+.mail{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:18px 0;border-bottom:1px solid rgba(255,255,255,.25)}
+.mail small{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ice)}
+.mail a{font-size:19px;font-weight:600;color:#fff}
+.copy{font-family:var(--mono);font-size:11px;letter-spacing:.12em;padding:8px 14px;border:1px solid rgba(255,255,255,.4);border-radius:99px;color:#fff;transition:.2s}
+.copy:hover{background:#fff;color:var(--foot)}
+.brief{margin-top:34px;font-size:14.5px}
+.brief li{list-style:none;padding:6px 0 6px 26px;position:relative}
+.brief li::before{content:"→";position:absolute;left:0;color:var(--ice)}
+form{background:var(--bg);color:var(--body);border-radius:16px;padding:34px;display:grid;gap:16px;box-shadow:0 40px 80px -30px rgba(0,0,0,.5)}
+form .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--sapphire);display:block}
+input,select,textarea{width:100%;font:inherit;font-size:15px;color:var(--ink);padding:13px 14px;margin-top:7px;border:1px solid var(--line2);border-radius:10px;background:var(--surface);transition:border-color .2s,box-shadow .2s}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--azure);box-shadow:0 0 0 4px rgba(0,141,168,.15)}
+textarea{min-height:130px;resize:vertical}
+.cta-band{margin-top:90px;padding-top:70px;border-top:1px solid rgba(255,255,255,.25);display:flex;justify-content:space-between;align-items:center;gap:30px;flex-wrap:wrap}
+.cta-band h2{font-size:clamp(46px,7vw,96px);max-width:14ch}
+footer{background:var(--foot);color:#a9d4de;padding:44px 0 36px;font-size:13px;border-top:1px solid rgba(255,255,255,.12)}
+footer .wrap{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:center}
+footer img{height:34px}
+footer .fl{display:flex;flex-wrap:wrap;gap:10px 22px;font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase}
+footer a:hover{color:var(--ice)}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(34px);transition:opacity .8s var(--ease),transform .8s var(--ease);transition-delay:var(--d,0s)}
+.rv.in{opacity:1;transform:none}
+
+/* responsive */
+@media(max-width:1100px){
+  .feat,.disc,.protos{grid-template-columns:repeat(2,1fr)}
+  .steps{grid-template-columns:repeat(2,1fr)}
+  .twin,.pub,.about-top,.c-grid{grid-template-columns:1fr;gap:44px}
+  .team{grid-template-columns:1fr}
+  .hero-row{grid-template-columns:1fr 1fr}
+  .hero-row>div:first-child{grid-column:1/-1}
+  .links{display:none}
+  .burger{display:block}
+  .links.open{display:flex;flex-direction:column;position:absolute;top:68px;left:0;right:0;background:var(--bg);padding:14px var(--gut) 26px;border-bottom:1px solid var(--line2)}
+  .nav-r .em{display:none}
+}
+@media(max-width:700px){
+  section{padding:72px 0}
+  .feat,.disc,.protos,.steps,.sectors{grid-template-columns:1fr}
+  .stat-grid{grid-template-columns:1fr 1fr;gap:26px 0}
+  .stat:nth-child(3){border-left:0;padding-left:0}
+  .idx th:nth-child(3),.idx th:nth-child(4),.idx td.c,.idx td.d{display:none}
+  .idx td.n{width:44px}
+  .ev{grid-template-columns:1fr;gap:4px}
+  .member{grid-template-columns:110px 1fr;gap:16px}
+  .member h3{font-size:30px}
+  form .two,.hero-row{grid-template-columns:1fr}
+  .scroll{display:none}
+  .peek{display:none}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}.rv{opacity:1;transform:none}}
+</style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-<symbol id="cx" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round"><circle cx="50" cy="50" r="40"/><ellipse cx="50" cy="50" rx="17" ry="40"/><path d="M10 50h80"/></g></symbol>
-<symbol id="arrow" viewBox="0 0 16 16"><path d="M2 8h11M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-<symbol id="back" viewBox="0 0 16 16"><path d="M14 8H3M7 4L3 8l4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-<symbol id="menu" viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
-</svg>
-<a class="skip" href="#main">Skip to content</a>
-<header class="top"><div class="wrap"><a class="brand" href="index.html" aria-label="CARTOXR home"><img class="logo logo-light" src="assets/cartoxr-logo.png" alt="CARTOXR Research Centre and Consultancy" width="247" height="65"><img class="logo logo-dark" src="assets/cartoxr-logo-white.png" alt="" aria-hidden="true" width="247" height="65"></a>
-<ul class="nav" id="nav"><li><a href="work.html">Work</a></li><li><a href="practice.html">Practice</a></li><li><a href="journey.html">Journey</a></li><li><a href="research.html">Research</a></li><li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li></ul>
-<div class="tools"><a class="mail" href="contact.html">shylesh@cartoxr.com</a><button class="theme-btn" type="button" data-theme-toggle aria-label="Switch to dark mode"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><button class="menu-btn" data-menu aria-controls="nav" aria-expanded="false" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#menu"/></svg></button></div></div></header><main id="main" class="wrap"><section class="mast"><div class="word"><h1>CARTO<em>XR</em></h1></div>
-<div class="strap"><p class="lead">Geospatial intelligence and <em>immersive experiences</em>: GIS and remote sensing first, then AR, VR and digital twins that people can walk through and decide with.</p>
-<div><h4>Disciplines</h4><ul><li><a href="work.html#geospatial">GIS &amp; geospatial</a> <span>· 5</span></li><li><a href="work.html#xr">XR / AR / VR</a> <span>· 5</span></li><li><a href="practice.html#digital-twin">Digital twin</a> <span>· new</span></li><li><a href="work.html#learning">Learning &amp; research</a> <span>· 3</span></li></ul></div>
-<div><h4>Company</h4><ul><li>Chennai, India</li><li>Founded 17 Feb 2025</li><li><a href="contact.html">shylesh@cartoxr.com</a></li><li>LLP · Research &amp; consultancy</li></ul></div></div></section>
-<div class="bar"><h2>Index of <em>work</em></h2><span>10 of 13 · <a class="link" href="work.html">Full index <svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><use href="#arrow"/></svg></a></span></div>
-<div style="overflow-x:auto"><table class="ix"><thead><tr><th>No.</th><th>Project</th><th class="c">Context</th><th class="d">Discipline</th><th style="text-align:right">Year</th></tr></thead><tbody><tr data-cat="geospatial" data-peek="assets/meghalaya-flood.webp"><td class="n"><a href="work-meghalaya-flood.html" tabindex="-1">01</a></td><td><a href="work-meghalaya-flood.html" class="t">Meghalaya flood modelling</a></td>
-<td class="c"><a href="work-meghalaya-flood.html" tabindex="-1">Meghalaya, India</a></td><td class="d"><a href="work-meghalaya-flood.html" tabindex="-1">GIS &amp; geospatial</a></td><td class="y"><a href="work-meghalaya-flood.html" tabindex="-1">2025–26</a></td></tr><tr data-cat="geospatial" data-peek="assets/mauritania-prospectivity.webp"><td class="n"><a href="work-mineral-prospectivity.html" tabindex="-1">02</a></td><td><a href="work-mineral-prospectivity.html" class="t">Satellite-based mineral prospectivity</a></td>
-<td class="c"><a href="work-mineral-prospectivity.html" tabindex="-1">Mauritania</a></td><td class="d"><a href="work-mineral-prospectivity.html" tabindex="-1">GIS &amp; geospatial</a></td><td class="y"><a href="work-mineral-prospectivity.html" tabindex="-1">2026</a></td></tr><tr data-cat="geospatial" data-peek=""><td class="n"><a href="work-pan-india-road-analysis.html" tabindex="-1">03</a></td><td><a href="work-pan-india-road-analysis.html" class="t">Pan-India toll and road analytics<span class="tag">Ongoing</span></a></td>
-<td class="c"><a href="work-pan-india-road-analysis.html" tabindex="-1">National-scale project</a></td><td class="d"><a href="work-pan-india-road-analysis.html" tabindex="-1">GIS &amp; geospatial</a></td><td class="y"><a href="work-pan-india-road-analysis.html" tabindex="-1">2026</a></td></tr><tr data-cat="geospatial" data-peek="assets/drone-fieldwork.webp"><td class="n"><a href="work-chennai-flood-drone-survey.html" tabindex="-1">04</a></td><td><a href="work-chennai-flood-drone-survey.html" class="t">Chennai flood drone survey</a></td>
-<td class="c"><a href="work-chennai-flood-drone-survey.html" tabindex="-1">Chennai, India</a></td><td class="d"><a href="work-chennai-flood-drone-survey.html" tabindex="-1">GIS &amp; geospatial</a></td><td class="y"><a href="work-chennai-flood-drone-survey.html" tabindex="-1">2024</a></td></tr><tr data-cat="geospatial" data-peek="assets/road-accident-map.webp"><td class="n"><a href="work-road-accident-analysis.html" tabindex="-1">05</a></td><td><a href="work-road-accident-analysis.html" class="t">Road accident analysis</a></td>
-<td class="c"><a href="work-road-accident-analysis.html" tabindex="-1">Confidential engagement</a></td><td class="d"><a href="work-road-accident-analysis.html" tabindex="-1">GIS &amp; geospatial</a></td><td class="y"><a href="work-road-accident-analysis.html" tabindex="-1">2025</a></td></tr><tr data-cat="xr" data-peek="assets/campus-navigation.webp"><td class="n"><a href="work-campus-indoor-navigation.html" tabindex="-1">06</a></td><td><a href="work-campus-indoor-navigation.html" class="t">Bengaluru campus indoor navigation</a></td>
-<td class="c"><a href="work-campus-indoor-navigation.html" tabindex="-1">Bengaluru, India</a></td><td class="d"><a href="work-campus-indoor-navigation.html" tabindex="-1">XR / AR / VR</a></td><td class="y"><a href="work-campus-indoor-navigation.html" tabindex="-1">2025</a></td></tr><tr data-cat="xr" data-peek=""><td class="n"><a href="work-chennai-navigation-utilities.html" tabindex="-1">07</a></td><td><a href="work-chennai-navigation-utilities.html" class="t">Chennai Central navigation and Anna Nagar AR utilities<span class="tag">Ongoing</span></a></td>
-<td class="c"><a href="work-chennai-navigation-utilities.html" tabindex="-1">Chennai, India</a></td><td class="d"><a href="work-chennai-navigation-utilities.html" tabindex="-1">XR / AR / VR</a></td><td class="y"><a href="work-chennai-navigation-utilities.html" tabindex="-1">2026</a></td></tr><tr data-cat="xr" data-peek=""><td class="n"><a href="work-confidential-indoor-navigation.html" tabindex="-1">08</a></td><td><a href="work-confidential-indoor-navigation.html" class="t">Confidential indoor navigation</a></td>
-<td class="c"><a href="work-confidential-indoor-navigation.html" tabindex="-1">Confidential navigation engagement</a></td><td class="d"><a href="work-confidential-indoor-navigation.html" tabindex="-1">XR / AR / VR</a></td><td class="y"><a href="work-confidential-indoor-navigation.html" tabindex="-1">2026</a></td></tr><tr data-cat="xr" data-peek="assets/rondo-vr.webp"><td class="n"><a href="work-rondo-vr.html" tabindex="-1">09</a></td><td><a href="work-rondo-vr.html" class="t">Rondo VR</a></td>
-<td class="c"><a href="work-rondo-vr.html" tabindex="-1">Historical VR film</a></td><td class="d"><a href="work-rondo-vr.html" tabindex="-1">XR / AR / VR</a></td><td class="y"><a href="work-rondo-vr.html" tabindex="-1">2025</a></td></tr><tr data-cat="xr" data-peek="assets/monkey-king.webp"><td class="n"><a href="work-monkey-king.html" tabindex="-1">10</a></td><td><a href="work-monkey-king.html" class="t">Monkey King animation tutorials</a></td>
-<td class="c"><a href="work-monkey-king.html" tabindex="-1">Animation tutorial series</a></td><td class="d"><a href="work-monkey-king.html" tabindex="-1">XR / AR / VR</a></td><td class="y"><a href="work-monkey-king.html" tabindex="-1">2025</a></td></tr></tbody></table></div>
-<section class="state"><p>Earth data is exploding. Understanding is not. We make it <em>readable</em>, on the map, in 3D and in XR.</p></section>
-<div class="nums"><div><b>13</b><small>Projects</small></div><div><b data-age-years>1.7</b><small>Years since 17 Feb 2025</small></div><div><b>2</b><small>Patent applications filed</small></div><div><b>5</b><small>Publications</small></div></div>
-<div class="bar"><h2>The <em>practice</em></h2><span><a class="link" href="practice.html">Full practice <svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><use href="#arrow"/></svg></a></span></div>
-<div class="cols4"><div><span class="k">GIS &amp; spatial analytics</span><p class="body">Mapping and spatial decision support for transport networks, infrastructure and the environment.</p><ul class="rl" style="margin-top:14px"><li><span>GIS &amp; spatial analytics</span></li><li><span>Remote sensing</span></li><li><span>Drone surveys &amp; photogrammetry</span></li><li><span>Flood &amp; terrain modelling</span></li></ul></div><div><span class="k">XR / AR / VR</span><p class="body">Immersive storytelling, augmented spatial information and indoor navigation grounded in real places and data.</p><ul class="rl" style="margin-top:14px"><li><span>AR &amp; VR experiences</span></li><li><span>Indoor navigation &amp; VPS</span></li><li><span>Immersive storytelling</span></li><li><span>Computer vision &amp; spatial tools</span></li></ul></div><div id="digital-twin"><span class="k">Digital twin</span><p class="body">Interactive 3D replicas of real places and assets, linked to spatial data so people can explore, inspect and test scenarios.</p><ul class="rl" style="margin-top:14px"><li><span>3D walkthroughs</span></li><li><span>Inspection layers</span></li><li><span>What-if scenario views</span></li><li><span>Data-linked interfaces</span></li></ul></div><div><span class="k">Research &amp; learning</span><p class="body">Geospatial and XR learning through workshops, academic content and research-led prototypes.</p><ul class="rl" style="margin-top:14px"><li><span>Courses &amp; MOOC content</span></li><li><span>Workshops</span></li><li><span>Research prototypes</span></li><li><span>Publications &amp; patents</span></li></ul></div></div>
-<div class="bar"><h2>On the <em>record</em></h2><span>Clients · research</span></div>
-<div class="cols3"><div><span class="k">Clients and engagements</span><ul class="rl"><li><span>LEA Associates</span></li><li><span>LTI Mindtree</span></li><li><span>Bajaj Allianz</span></li><li><span>Mine Edge</span></li><li><span>CUMTA</span></li><li><span>Dr Ambedkar Open University</span></li><li><span>SWAYAM</span></li></ul></div>
-<div><span class="k">Research and IP</span><ul class="rl"><li><span><b>ISPRS Annals</b>, VR accuracy-assessment tool</span><small>2024</small></li><li><span><b>2 patent applications</b>, 3D vector data and measurement in VR</span><small>2023</small></li><li><span><b>MIGARS 2026</b>, SubsurfaceXR and FloodVR accepted</span><small>2026</small></li></ul></div>
-<div><span class="k">Published in</span><p class="body">ISPRS Annals, CRC Press, Routledge India and the Journal of Civil Engineering Inter Disciplinaries.</p><p style="margin-top:16px"><a class="link" href="research.html">Research and IP <svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><use href="#arrow"/></svg></a></p></div></div></main>
-<footer class="foot on-dark"><div class="wrap"><div class="big"><div><h2>Let's map your next big idea.<span>Let's start.</span></h2><div class="rule"></div></div></div>
-<div class="agebar"><div><small>Company age · founded 17 February 2025</small><br><b data-age>1 year, 8 months, 12 days</b></div><div style="text-align:right"><small>Projects delivered</small><br><b>13</b></div></div>
-<div class="row"><ul><li><a href="index.html">Index</a></li><li><a href="work.html">Work</a></li><li><a href="practice.html">Practice</a></li><li><a href="journey.html">Journey</a></li><li><a href="research.html">Research</a></li><li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li></ul><div style="display:grid;gap:8px"><div class="copyline"><code>shylesh@cartoxr.com</code><button type="button" class="copybtn" data-copy="shylesh@cartoxr.com">Copy</button></div>
-<div class="copyline"><code>subramaniyam13@gmail.com</code><button type="button" class="copybtn" data-copy="subramaniyam13@gmail.com">Copy</button></div><div class="copyline"><a class="link" href="https://www.linkedin.com/company/cartoxr/" target="_blank" rel="noopener">LinkedIn <svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><use href="#arrow"/></svg></a></div></div><div style="display:grid;gap:6px;align-content:start"><img class="logo" src="assets/cartoxr-logo-white.png" alt="CARTOXR" width="247" height="65" style="height:60px;width:auto;max-width:none"><small>CARTOXR Research Centre and Consultancy LLP</small><small>Chennai, India · © 2026</small></div></div></div></footer><div class="peek" id="peek" aria-hidden="true"><img alt=""></div>
-<script src="assets/site.js"></script>
+<div id="prog"></div>
+<div class="cur" id="cur"><span id="curt"></span></div><div class="cur-dot" id="dot"></div>
+<div class="peek" id="peek"><img alt=""></div>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="CARTOXR home"><img class="l-d" src="assets/cartoxr-logo.png" alt="CARTOXR"><img class="l-w" src="assets/logo.png" alt="CARTOXR"></a>
+    <nav class="links" id="links" aria-label="Main">
+      <a href="#work">Work</a><a href="#practice">Practice</a><a href="#journey">Journey</a><a href="#research">Research</a><a href="#about">About</a><a href="#contact">Contact</a>
+    </nav>
+    <div class="nav-r">
+      <a class="em" href="mailto:shylesh@cartoxr.com">shylesh@cartoxr.com</a>
+      <button class="theme" id="theme" aria-label="Toggle dark mode">◐</button>
+      <button class="burger" id="burger" aria-expanded="false">Menu</button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <canvas id="net"></canvas>
+  <div class="wrap">
+    <h1 aria-label="CARTOXR" id="word"><span>CARTO</span><span class="xr">XR</span></h1>
+    <div class="hero-row">
+      <div>
+        <p>Geospatial intelligence and immersive experiences: <b>GIS and remote sensing first</b>, then AR, VR and digital twins that people can walk through and decide with.</p>
+        <div class="cta"><a class="btn fill" data-magnetic href="#work">See our work →</a><a class="btn line" data-magnetic href="#contact">Start a project</a></div>
+      </div>
+      <div><span class="mono">Disciplines</span>
+        <ul><li>GIS &amp; geospatial · <span>5</span></li><li>XR / AR / VR · <span>5</span></li><li>Digital twin · <span>new</span></li><li>Learning &amp; research · <span>3</span></li></ul></div>
+      <div><span class="mono">Company</span>
+        <ul><li>Chennai, India</li><li>Founded 17 Feb 2025</li><li>shylesh@cartoxr.com</li><li>LLP · Research &amp; consultancy</li></ul></div>
+    </div>
+  </div>
+  <div class="scroll">SCROLL</div>
+</header>
+
+<div class="marq" aria-hidden="true"><div>
+  <span>GIS &amp; Spatial analytics</span><span>Remote sensing</span><span>Drone surveys</span><span>Flood modelling</span><span>Augmented reality</span><span>Virtual reality</span><span>Digital twins</span><span>Indoor navigation</span>
+  <span>GIS &amp; Spatial analytics</span><span>Remote sensing</span><span>Drone surveys</span><span>Flood modelling</span><span>Augmented reality</span><span>Virtual reality</span><span>Digital twins</span><span>Indoor navigation</span>
+</div></div>
+
+<section class="stats"><div class="wrap"><div class="stat-grid">
+  <div class="stat rv"><b data-n="13">0</b><span>Projects delivered</span></div>
+  <div class="stat rv" style="--d:.1s"><b id="age">0</b><span>Company age · since 17 Feb 2025</span></div>
+  <div class="stat rv" style="--d:.2s"><b data-n="2">0</b><span>Patent applications filed</span></div>
+  <div class="stat rv" style="--d:.3s"><b data-n="5">0</b><span>Publications</span></div>
+</div></div></section>
+
+<!-- WORK -->
+<section id="work"><div class="wrap">
+  <div class="sec-head"><h2 class="rv">Index of <em>work</em></h2><p class="lead rv">Geospatial analysis first, then immersive XR, navigation and learning. Hover a row to preview it.</p></div>
+
+  <div class="feat">
+    <a href="#contact" class="fc tilt rv" data-cursor="view"><img src="assets/meghalaya.jpg" alt="Meghalaya flood inundation map"><div class="glare"></div><div class="t"><span class="mono">GIS · 2025–26</span><h3>Meghalaya flood modelling</h3><p>18 watersheds, 6 scenarios, 108 model runs.</p></div></a>
+    <a href="#contact" class="fc tilt rv" style="--d:.08s" data-cursor="view"><img src="assets/mineral.jpg" alt="Gold prospectivity map"><div class="glare"></div><div class="t"><span class="mono">Remote sensing · 2026</span><h3>Mineral prospectivity</h3><p>ASTER and Sentinel-1 SAR, Mauritania.</p></div></a>
+    <a href="#contact" class="fc tilt rv" style="--d:.16s" data-cursor="view"><img src="assets/twin.jpg" alt="Warehouse digital twin"><div class="glare"></div><div class="t"><span class="mono">Digital twin · 2026</span><h3>Warehouse twin</h3><p>3D walkthrough and microclimate view.</p></div></a>
+    <a href="#contact" class="fc tilt rv" style="--d:.24s" data-cursor="view"><img src="assets/rondo.jpg" alt="Rondo VR film still"><div class="glare"></div><div class="t"><span class="mono">VR · 2025</span><h3>Rondo VR</h3><p>A 10-minute immersive film.</p></div></a>
+  </div>
+
+  <div class="tabs" id="tabs"><button class="tab on" data-f="all">All</button><button class="tab" data-f="gis">GIS</button><button class="tab" data-f="xr">XR / AR / VR</button><button class="tab" data-f="learn">Learning</button></div>
+  <table class="idx"><thead><tr><th>No.</th><th>Project</th><th>Context</th><th>Discipline</th><th style="text-align:right">Year</th></tr></thead><tbody id="rows">
+    <tr class="row" data-g="gis" data-img="meghalaya.jpg" data-c="1"><td class="n">01</td><td class="p">Meghalaya flood modelling</td><td class="c">Meghalaya, India</td><td class="d">GIS &amp; geospatial</td><td class="y">2025–26</td></tr>
+    <tr class="row" data-g="gis" data-img="mineral.jpg"><td class="n">02</td><td class="p">Satellite-based mineral prospectivity</td><td class="c">Mauritania</td><td class="d">GIS &amp; geospatial</td><td class="y">2026</td></tr>
+    <tr class="row" data-g="gis" data-img="roads.jpg" data-c="1"><td class="n">03</td><td class="p">Pan-India toll and road analytics<i>ONGOING</i></td><td class="c">National-scale project</td><td class="d">GIS &amp; geospatial</td><td class="y">2026</td></tr>
+    <tr class="row" data-g="gis" data-img="drone.jpg"><td class="n">04</td><td class="p">Chennai flood drone survey</td><td class="c">Chennai, India</td><td class="d">GIS &amp; geospatial</td><td class="y">2024</td></tr>
+    <tr class="row" data-g="gis" data-img="accidents.jpg" data-c="1"><td class="n">05</td><td class="p">Road accident analysis</td><td class="c">Confidential engagement</td><td class="d">GIS &amp; geospatial</td><td class="y">2025</td></tr>
+    <tr class="row" data-g="xr" data-img="ar-campus.jpg" data-bg="1"><td class="n">06</td><td class="p">Bengaluru campus indoor navigation</td><td class="c">Bengaluru, India</td><td class="d">XR / AR / VR</td><td class="y">2025</td></tr>
+    <tr class="row" data-g="xr"><td class="n">07</td><td class="p">Chennai Central navigation and Anna Nagar AR utilities<i>ONGOING</i></td><td class="c">Chennai, India</td><td class="d">XR / AR / VR</td><td class="y">2026</td></tr>
+    <tr class="row" data-g="xr"><td class="n">08</td><td class="p">Confidential indoor navigation</td><td class="c">Confidential engagement</td><td class="d">XR / AR / VR</td><td class="y">2026</td></tr>
+    <tr class="row" data-g="xr" data-img="rondo.jpg"><td class="n">09</td><td class="p">Rondo VR</td><td class="c">Historical VR film</td><td class="d">XR / AR / VR</td><td class="y">2025</td></tr>
+    <tr class="row" data-g="xr" data-img="monkeyking.jpg"><td class="n">10</td><td class="p">Monkey King animation tutorials</td><td class="c">Animation tutorial series</td><td class="d">XR / AR / VR</td><td class="y">2025</td></tr>
+    <tr class="row" data-g="learn" data-img="swayam.jpg"><td class="n">11</td><td class="p">Cartographic Practical Techniques</td><td class="c">SWAYAM MOOC</td><td class="d">Learning &amp; research</td><td class="y">2025–26</td></tr>
+    <tr class="row" data-g="learn" data-img="workshop.jpg"><td class="n">12</td><td class="p">Academic workshops</td><td class="c">Engineering colleges &amp; universities</td><td class="d">Learning &amp; research</td><td class="y">—</td></tr>
+    <tr class="row" data-g="learn"><td class="n">13</td><td class="p">University course-content development</td><td class="c">Dr Ambedkar Open University</td><td class="d">Learning &amp; research</td><td class="y">—</td></tr>
+  </tbody></table>
+</div></section>
+
+<!-- PRACTICE -->
+<section id="practice" style="background:var(--surface)"><div class="wrap">
+  <div class="sec-head"><h2 class="rv">The <em>practice</em></h2><p class="lead rv">A geospatial foundation with an immersive perspective: GIS and remote sensing, XR / AR / VR, digital twins, and research.</p></div>
+  <div class="disc">
+    <div class="dc rv"><span class="no">01 / GIS</span><h3>GIS &amp; spatial analytics</h3><p>Mapping and spatial decision support for transport networks, infrastructure and the environment.</p><ul><li>GIS &amp; spatial analytics</li><li>Remote sensing</li><li>Drone surveys &amp; photogrammetry</li><li>Flood &amp; terrain modelling</li></ul></div>
+    <div class="dc rv" style="--d:.08s"><span class="no">02 / XR</span><h3>XR / AR / VR</h3><p>Navigation, storytelling and spatial interfaces built around real places.</p><ul><li>Indoor navigation &amp; VPS</li><li>AR &amp; VR experiences</li><li>Immersive storytelling</li><li>Computer vision &amp; spatial tools</li></ul></div>
+    <div class="dc rv" style="--d:.16s"><span class="no">03 / TWIN</span><h3>Digital twin</h3><p>Interactive 3D replicas of real places and assets, linked to spatial data so people can explore, inspect and test what-ifs.</p><ul><li>Interactive 3D twins</li><li>Inspection &amp; layers</li><li>Scenario views</li><li>Data-linked interfaces</li></ul></div>
+    <div class="dc rv" style="--d:.24s"><span class="no">04 / LEARN</span><h3>Research &amp; learning</h3><p>Practical workshops, academic content and research-led prototypes.</p><ul><li>Courses &amp; MOOC content</li><li>Workshops</li><li>Research prototypes</li><li>Publications &amp; patents</li></ul></div>
+  </div>
+
+  <div class="sub">Where it <em style="font-style:normal;color:var(--sapphire)">applies</em></div>
+  <div class="sectors">
+    <div class="sector"><h3>Environment &amp; resilience</h3><p>Watersheds, terrain and modelled flood scenarios.</p></div>
+    <div class="sector"><h3>Transport &amp; infrastructure</h3><p>Road networks, toll-plaza analytics and spatial information.</p></div>
+    <div class="sector"><h3>Campuses &amp; public places</h3><p>Indoor navigation, AR records and wayfinding.</p></div>
+    <div class="sector"><h3>Exploration &amp; resources</h3><p>Satellite-image analysis and preliminary prospectivity.</p></div>
+    <div class="sector"><h3>Stories &amp; learning</h3><p>Immersive narratives, academic content and workshops.</p></div>
+    <div class="sector"><h3>Research &amp; prototypes</h3><p>New spatial tools and methods explored through practical experiments.</p></div>
+  </div>
+</div></section>
+
+<section class="dark spot" id="twin"><div class="wrap twin">
+  <div class="rv"><span class="mono">Digital twin · new</span><h2 style="margin:14px 0 0;font-size:clamp(54px,8vw,104px)">Walk it. <em>Inspect it.</em> Test it.</h2>
+    <p class="lead">Interactive 3D replicas of real places and assets, linked to spatial data so people can explore, inspect and test scenarios before they commit.</p>
+    <ul><li><b>01</b>3D walkthroughs of warehouses and engineering assets</li><li><b>02</b>Inspection layers you can switch and read in context</li><li><b>03</b>What-if scenario views for testing conditions</li></ul></div>
+  <div class="imgs rv" id="twinimgs"><img class="i1" src="assets/warehouse3d.jpg" alt="Warehouse 3D walkthrough" loading="lazy"><img class="i2" src="assets/furnace.jpg" alt="Furnace engineering twin interface" loading="lazy"></div>
+</div></section>
+
+<!-- JOURNEY -->
+<section id="journey"><div class="wrap">
+  <div class="sec-head"><h2 class="rv">Our <em>journey</em></h2><p class="lead rv">From drone fieldwork and immersive storytelling to navigation, environmental modelling and geospatial research. Ongoing labels reflect October 2026.</p></div>
+  <div class="tl" id="tl"><div class="fill" id="tlf"></div>
+    <div class="yr">2023</div>
+    <div class="ev"><div class="dt">28 Oct 2023</div><div><h3>Patent filing: 3D spatial vector data in VR</h3><p>Application 202341073610: system and method for creating and editing three-dimensional spatial vector data in a virtual reality environment.</p></div></div>
+    <div class="ev"><div class="dt">8 Dec 2023</div><div><h3>Patent filing: 3D measurements in VR</h3><p>Application 202341084018: system and method for measurements on a 3D real-world reconstructed model in an immersive VR environment.</p></div></div>
+    <div class="yr">2024</div>
+    <div class="ev"><div class="dt">Dec 2024</div><div><h3>Chennai flood drone survey</h3><p>Drone surveying during the Chennai floods.</p></div></div>
+    <div class="yr">2025</div>
+    <div class="ev"><div class="dt">17 Feb 2025</div><div><h3>CARTOXR founded</h3><p>CARTOXR Research Centre and Consultancy LLP begins in Chennai.</p></div></div>
+    <div class="ev"><div class="dt">Mar – Jun 2025</div><div><h3>Rondo VR</h3><p>A ten-minute immersive film exploring the history of Rondo in Saint Paul.</p></div></div>
+    <div class="ev"><div class="dt">Jul 2025 – Jan 2026</div><div><h3>Cartographic Practical Techniques</h3><p>Fifteen classes, study material, transcripts, academic scripts, video editing and stakeholder coordination.</p></div></div>
+    <div class="ev"><div class="dt">Jul – Nov 2025</div><div><h3>Bengaluru campus indoor navigation</h3><p>Android and iOS indoor-navigation applications for the Bengaluru campus.</p></div></div>
+    <div class="ev"><div class="dt">Nov 2025 – Mar 2026</div><div><h3>Meghalaya flood modelling</h3><p>Statewide flood modelling across eighteen watersheds.</p></div></div>
+    <div class="ev"><div class="dt">Dec 2025</div><div><h3>Road accident analysis</h3><p>Spatial road-accident analysis for a confidential client.</p></div></div>
+    <div class="ev"><div class="dt">Dec 2025</div><div><h3>Monkey King animation tutorials</h3><p>Unreal Engine animation tutorial series and short-film work.</p></div></div>
+    <div class="yr">2026</div>
+    <div class="ev"><div class="dt">Mar – Jun 2026</div><div><h3>Confidential indoor navigation</h3><p>Indoor-navigation work with client and site details kept confidential.</p></div></div>
+    <div class="ev"><div class="dt">Jun 2026</div><div><h3>Satellite-based mineral prospectivity</h3><p>Remote sensing and preliminary gold-prospectivity analysis in Mauritania.</p></div></div>
+    <div class="ev"><div class="dt">Jun – Oct 2026</div><div><h3>Pan-India toll and road analytics<i>ONGOING</i></h3><p>Toll-plaza, logistics and road-network analysis for a central government project.</p></div></div>
+    <div class="ev"><div class="dt">Aug – Nov 2026</div><div><h3>Chennai Central navigation &amp; Anna Nagar AR utilities<i>ONGOING</i></h3><p>Separate workstreams for Chennai Central navigation and Anna Nagar AR underground-utility visualisation.</p></div></div>
+  </div>
+</div></section>
+
+<!-- RESEARCH -->
+<section class="dark spot" id="research"><div class="wrap">
+  <div class="sec-head"><h2 class="rv">Research <em>&amp; IP</em></h2><p class="lead rv" style="color:#A9D4DE">Prototypes, publications and patent applications that grow out of practical geospatial and XR work.</p></div>
+  <div class="protos">
+    <div class="pc rv"><div class="im"><span>GeoXR</span></div><div class="b"><span class="mono">Virtual reality</span><h3>GeoXR</h3><p>Immersive interaction with 3D models of real places. Mark locations, draw shapes and take measurements.</p></div></div>
+    <div class="pc rv" style="--d:.08s"><div class="im"><img src="assets/ar-satellite.jpg" alt="Satellite data in AR" loading="lazy"></div><div class="b"><span class="mono">AR · Sentinel-2A · NDVI</span><h3>Satellite data in AR</h3><p>View satellite imagery, spectral bands and NDVI on real-world surfaces.</p></div></div>
+    <div class="pc rv" style="--d:.16s"><div class="im"><img src="assets/neuroscope.jpg" alt="NeuroscopeXR" loading="lazy"></div><div class="b"><span class="mono">Mixed reality · 3D imaging</span><h3>NeuroscopeXR</h3><p>A research prototype for immersive 3D brain models and remote collaboration.</p></div></div>
+    <div class="pc rv" style="--d:.24s"><div class="im"><span>Alandur</span></div><div class="b"><span class="mono">Augmented reality</span><h3>Alandur Metro wayfinding</h3><p>An AR indoor-navigation prototype for a multi-level public-transport environment.</p></div></div>
+  </div>
+  <p class="mono" style="margin-top:16px;opacity:.75;text-transform:none;letter-spacing:.04em">Research prototypes. Deployment, ownership and measured outcomes are not established.</p>
+
+  <div class="pub" style="margin-top:80px">
+    <div><span class="mono">Publications</span>
+      <ul class="pubs" style="margin-top:14px">
+        <li><span class="mono">Journal · 2024</span><h4>A Virtual Reality Tool for Accuracy Assessment of 3D Models in an Immersive Virtual Environment</h4><p>Subramaniyam, Shylesh, Ramasamy, Kumar. ISPRS Annals, X-4-2024, 333–340. <a href="https://doi.org/10.5194/isprs-annals-X-4-2024-333-2024" target="_blank" rel="noopener">DOI ↗</a></p></li>
+        <li><span class="mono">Book chapter · 2025</span><h4>Assessing Urban Water Stream Pollution by Using Geospatial Technologies</h4><p>D’Silva, Subramaniyam, Raskar-Phule. Smart Buildings and Cities with Remote Sensing and GIS, CRC Press.</p></li>
+        <li><span class="mono">Book chapter · 2025</span><h4>Real-time Computation of Precipitable Water Vapor from GPS Data</h4><p>Raskar-Phule, Subramaniyam. GNSS Applications in Earth and Space Observations, CRC Press.</p></li>
+        <li><span class="mono">Book chapter · 2025</span><h4>Mapping and Analyzing Air Pollution Using Google Earth Engine of Thiruvananthapuram City</h4><p>Subramaniyam, Sk. Disaster Risk, Resilient Agriculture and Livelihood, Routledge India.</p></li>
+        <li><span class="mono">Journal · 2021</span><h4>Planning and Mapping of a Multi-Modal Integrated Transportation System for Metro Station at Dadar, Mumbai</h4><p>Subramaniyam, Raskar-Phule. Journal of Civil Engineering Inter Disciplinaries, 2(2), 7–17.</p></li>
+      </ul></div>
+    <div><span class="mono">Patents &amp; conferences</span>
+      <div class="ip"><div class="box"><b>Creating and editing 3D spatial vector data in a virtual reality environment</b><span>No. 202341073610 · Filed 28 Oct 2023</span></div>
+        <div class="box"><b>Measurements on a 3D real-world reconstructed model in immersive VR</b><span>No. 202341084018 · Filed 8 Dec 2023</span></div>
+        <div class="box"><b>SubsurfaceXR · VPS-anchored AR for subsurface infrastructure</b><span>Accepted for oral presentation · MIGARS 2026</span></div>
+        <div class="box"><b>FloodVR · VR flood simulation and disaster awareness</b><span>Accepted for poster presentation · MIGARS 2026</span></div></div>
+      <div style="margin-top:44px"><span class="mono">Clients &amp; engagements</span>
+        <div class="clients"><span>LEA Associates</span><span>LTI Mindtree</span><span>Bajaj Allianz</span><span>Mine Edge</span><span>CUMTA</span><span>Dr Ambedkar Open University</span><span>SWAYAM</span></div></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ABOUT -->
+<section id="about"><div class="wrap">
+  <div class="sec-head"><h2 class="rv">About <em>us</em></h2><p class="lead rv">CARTOXR Research Centre and Consultancy LLP is a Chennai-based startup integrating geospatial technology and extended reality through research, prototypes and practical project work.</p></div>
+  <div class="about-top">
+    <div class="rv"><span class="mono">Our vision</span><h3 style="margin-top:14px">Make spatial information useful and accessible.</h3></div>
+    <div class="rv"><p>We aim to enhance how people interact with and understand the world through spatial technologies. Our focus is on the connection between real places, the data that describes them and the way people experience that information.</p><p>Our work spans GIS and remote sensing, drone surveying and photogrammetry, flood and transport analysis, AR/VR storytelling, indoor navigation and digital twins.</p>
+      <figure class="fig"><img src="assets/drone.jpg" alt="CARTOXR drone-survey fieldwork" loading="lazy"><figcaption>FIG. 1 · Drone-survey fieldwork · contextual photograph</figcaption></figure></div>
+  </div>
+
+  <div class="sub">The <em style="font-style:normal;color:var(--sapphire)">team</em></div>
+  <div class="team">
+    <div class="member tilt rv"><div class="ph"><img src="assets/team-dharshan.jpg" alt="Dharshan Shylesh" loading="lazy"><span class="tagc">CPU</span></div><div><span class="mono">Founder</span><h3>Dharshan Shylesh</h3><p>GIS development, spatial analysis and research.</p><a href="mailto:shylesh@cartoxr.com">shylesh@cartoxr.com</a></div></div>
+    <div class="member tilt rv" style="--d:.1s"><div class="ph"><img src="assets/team-bala.jpg" alt="S. Bala Subramaniyam" loading="lazy"><span class="tagc">GPU</span></div><div><span class="mono">Co-founder</span><h3>S. Bala Subramaniyam</h3><p>XR development, geospatial systems and interactive applications.</p><a href="mailto:subramaniyam13@gmail.com">subramaniyam13@gmail.com</a></div></div>
+  </div>
+
+  <div class="sub">Learning &amp; <em style="font-style:normal;color:var(--sapphire)">academic work</em></div>
+  <div class="disc" style="grid-template-columns:repeat(3,1fr)">
+    <div class="dc rv"><span class="no">SWAYAM MOOC</span><h3>Cartographic Practical Techniques</h3><p>Fifteen classes with study materials, transcripts and academic scripts, plus video editing and coordination across faculty and editors.</p></div>
+    <div class="dc rv" style="--d:.08s"><span class="no">WORKSHOPS</span><h3>Academic workshops</h3><p>Delivered at IIST Thiruvananthapuram, Sardar Patel College of Engineering Mumbai, CUTN Thiruvarur and Bharati Vidyapeeth Pune.</p></div>
+    <div class="dc rv" style="--d:.16s"><span class="no">DR AMBEDKAR OPEN UNIVERSITY</span><h3>Course content</h3><p>Course-content development for the M.Sc. Geography and Diploma in Geoinformatics programmes.</p></div>
+  </div>
+</div></section>
+
+<!-- FAQ -->
+<section style="background:var(--surface)"><div class="wrap">
+  <div class="sec-head"><h2 class="rv">Questions <em>&amp; answers</em></h2></div>
+  <div class="faq">
+    <details><summary>How do GIS and XR work together?</summary><div class="ans">GIS organises and analyses information about places. AR and VR can make it easier to inspect through navigation, immersive visualisation and interactive spatial tools. We select the format around the project question.</div></details>
+    <details><summary>What geospatial work is represented?</summary><div class="ans">The portfolio includes drone surveying, flood modelling, satellite-based prospectivity, accident mapping, and toll-plaza and road-network analysis. Each case describes its scope and source context.</div></details>
+    <details><summary>Can you develop indoor navigation for Android and iOS?</summary><div class="ans">The campus engagement includes Android and iOS applications. Positioning methods, hardware and site requirements are defined for each new project.</div></details>
+    <details><summary>Do flood maps show an actual flood event?</summary><div class="ans">The Meghalaya map is modelled inundation for a stated rainfall scenario, rather than observed flood extent. Inputs, assumptions and validation are part of interpreting the scenario.</div></details>
+    <details><summary>Does satellite prospectivity confirm a mineral deposit?</summary><div class="ans">Satellite analysis helps identify preliminary targets. Field investigation and further evidence are needed before making a deposit claim.</div></details>
+    <details><summary>Do you offer workshops and academic content?</summary><div class="ans">Yes. Workshops at IIST, Sardar Patel College of Engineering, CUTN and Bharati Vidyapeeth, fifteen SWAYAM cartography classes, and geography and geoinformatics course content.</div></details>
+    <details><summary>What should a starting brief include?</summary><div class="ans">Share the question to solve, the audience, available data or imagery, the intended platform and the target timeline.</div></details>
+  </div>
+</div></section>
+
+<!-- CONTACT -->
+<section class="contact spot" id="contact"><div class="wrap">
+  <div class="sec-head" style="border-color:rgba(255,255,255,.25)"><h2 class="rv">Let’s <em>talk</em></h2><p class="lead rv" style="color:#d6f0f5">Start with a place, a question or an idea. Share what information is available and what the project should help people understand or do.</p></div>
+  <div class="c-grid">
+    <div class="rv">
+      <span class="mono">Contact</span>
+      <div class="mail"><div><small>Instagram</small><a href="https://instagram.com/carto.xr" target="_blank" rel="noopener">@carto.xr</a></div></div>
+      <div class="brief"><span class="mono">A useful starting brief</span><ul style="margin-top:10px"><li>The place or system involved</li><li>The question your project needs to answer</li><li>Available imagery, survey records or datasets</li><li>Audience, platform and timeline</li></ul></div>
+    </div>
+    <form id="f" class="rv" style="--d:.1s">
+      <div class="two"><label>Name<input name="name" required autocomplete="name"></label><label>Organisation<input name="org" autocomplete="organization"></label></div>
+      <label>Email<input name="email" type="email" required autocomplete="email"></label>
+      <label>Interest<select name="int"><option>GIS &amp; spatial analytics</option><option>XR / AR / VR</option><option>Digital twin</option><option>Research &amp; learning</option><option>Remote sensing</option><option>Drone surveys &amp; photogrammetry</option><option>Flood &amp; terrain modelling</option><option>Indoor navigation &amp; VPS</option></select></label>
+      <label>Brief<textarea name="msg" required placeholder="The place, the question, the data you have, audience and timeline."></textarea></label>
+      <button class="btn fill" data-magnetic type="submit" style="justify-content:center">Open in email →</button>
+    </form>
+  </div>
+  <div class="cta-band"><h2>Let’s map your next <em>big idea.</em></h2><a class="btn white" data-magnetic href="mailto:shylesh@cartoxr.com">Let’s start →</a></div>
+</div></section>
+
+<footer><div class="wrap">
+  <img src="assets/logo.png" alt="CARTOXR">
+  <span>CARTOXR Research Centre and Consultancy LLP · Chennai, India · © 2026</span>
+  <div class="fl"><a href="#work">Work</a><a href="#practice">Practice</a><a href="#journey">Journey</a><a href="#research">Research</a><a href="#about">About</a><a href="#contact">Contact</a></div>
+</div></footer>
+
+<script>
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const fine=matchMedia('(pointer:fine)').matches,reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+/* theme */
+const root=document.documentElement;
+try{const t=localStorage.getItem('cxr-theme');if(t)root.dataset.theme=t}catch(e){}
+$('#theme').onclick=()=>{const d=root.dataset.theme==='dark'?'light':'dark';root.dataset.theme=d;try{localStorage.setItem('cxr-theme',d)}catch(e){};dots=null;initNet()};
+
+/* nav */
+const nav=$('#nav'),links=$('#links'),burger=$('#burger');
+burger.onclick=()=>{const o=links.classList.toggle('open');burger.setAttribute('aria-expanded',o)};
+links.addEventListener('click',e=>{if(e.target.tagName==='A')links.classList.remove('open')});
+let lastY=0;
+addEventListener('scroll',()=>{
+  const y=scrollY,h=document.documentElement.scrollHeight-innerHeight;
+  $('#prog').style.width=(y/h*100)+'%';
+  nav.classList.toggle('hide',y>lastY&&y>400&&!links.classList.contains('open'));lastY=y;
+  timeline();
+},{passive:true});
+const secs=$$('section[id]'),navA=$$('.links a');
+const spy=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)navA.forEach(a=>a.classList.toggle('on',a.hash==='#'+e.target.id))}),{rootMargin:'-45% 0px -50% 0px'});
+secs.forEach(s=>spy.observe(s));
+
+/* reveal + count */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);const b=$('b[data-n]',e.target);if(b)count(b,+b.dataset.n);if(e.target.querySelector('#age'))age()}}),{threshold:.15});
+$$('.rv').forEach(el=>io.observe(el));
+function count(el,n){let s=null;const f=t=>{s=s||t;const p=Math.min((t-s)/1400,1);el.textContent=Math.round(n*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f)};requestAnimationFrame(f)}
+function age(){const a=$('#age');if(a.dataset.d)return;a.dataset.d=1;const st=new Date(2025,1,17),n=new Date();let m=(n.getFullYear()-st.getFullYear())*12+n.getMonth()-st.getMonth();if(n.getDate()<st.getDate())m--;const y=Math.floor(m/12),mo=m%12;
+  a.innerHTML=y+'<small>y</small> '+mo+'<small>m</small>'}
+
+/* timeline */
+const tl=$('#tl'),tlf=$('#tlf'),evs=$$('.ev');
+function timeline(){if(!tl)return;const r=tl.getBoundingClientRect(),mid=innerHeight*.6;tlf.style.height=Math.max(0,Math.min(r.height-6,mid-r.top))+'px';evs.forEach(e=>e.classList.toggle('lit',e.getBoundingClientRect().top<mid))}
+timeline();
+
+/* work filter + preview */
+const peek=$('#peek'),pimg=$('img',peek);
+$$('.tab').forEach(t=>t.onclick=()=>{$$('.tab').forEach(x=>x.classList.toggle('on',x===t));$$('#rows tr').forEach(r=>r.classList.toggle('gone',t.dataset.f!=='all'&&r.dataset.g!==t.dataset.f))});
+let px=0,py=0,tx=0,ty=0;
+$$('#rows tr').forEach(r=>{
+  r.addEventListener('mouseenter',()=>{if(!r.dataset.img||!fine)return;pimg.src='assets/'+r.dataset.img;peek.classList.toggle('contain',!!r.dataset.bg);peek.classList.add('on');setCur('hide',true)});
+  r.addEventListener('mouseleave',()=>{peek.classList.remove('on');setCur('hide',false)});
+});
+
+/* cursor */
+const cur=$('#cur'),dot=$('#dot'),curt=$('#curt');
+let cx=innerWidth/2,cy=innerHeight/2,mx=cx,my=cy,lastT=0;
+function setCur(c,on){cur.classList.toggle(c,on)}
+if(fine&&!reduce){
+  let first=true;
+  addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;if(first){first=false;cx=mx;cy=my;px=tx=mx;py=ty=my;document.body.classList.add('has-cur')}tx=mx+24;ty=my-60;dot.style.transform=`translate(${mx}px,${my}px)`;
+    const now=performance.now();if(now-lastT>45){lastT=now;const t=document.createElement('i');t.className='trail';t.style.left=mx+'px';t.style.top=my+'px';document.body.appendChild(t);setTimeout(()=>t.remove(),700)}
+    const el=e.target.closest&&e.target;
+    const v=el&&el.closest('[data-cursor="view"]'),l=el&&el.closest('a,button,summary,.tab,.member,.dc');
+    setCur('view',!!v);setCur('link',!!l&&!v);curt.textContent=v?'VIEW':'';
+    setCur('hide',!!(el&&el.closest('input,textarea,select')));
+    document.querySelectorAll('.spot').forEach(s=>{const r=s.getBoundingClientRect();const inside=my>=r.top&&my<=r.bottom;s.style.setProperty('--mx',(mx-r.left)+'px');s.style.setProperty('--my',(my-r.top)+'px');s.style.setProperty('--so',inside?1:0)});
+  });
+  addEventListener('mousedown',()=>setCur('down',true));addEventListener('mouseup',()=>setCur('down',false));
+  document.addEventListener('mouseleave',()=>cur.style.opacity=0);document.addEventListener('mouseenter',()=>cur.style.opacity='');
+  (function loop(){cx+=(mx-cx)*.16;cy+=(my-cy)*.16;cur.style.transform=`translate(${cx}px,${cy}px)`;
+    px+=(tx-px)*.14;py+=(ty-py)*.14;peek.style.transform=(peek.classList.contains('on')?'scale(1)':'scale(.85)')+'';peek.style.left=px+'px';peek.style.top=py+'px';requestAnimationFrame(loop)})();
+
+  /* magnetic buttons */
+  $$('[data-magnetic]').forEach(b=>{b.addEventListener('mousemove',e=>{const r=b.getBoundingClientRect();b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.28}px,${(e.clientY-r.top-r.height/2)*.4}px)`});b.addEventListener('mouseleave',()=>b.style.transform='')});
+  /* tilt */
+  $$('.tilt').forEach(c=>{c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;c.style.transform=`perspective(800px) rotateY(${(x-.5)*14}deg) rotateX(${(.5-y)*14}deg) translateY(-6px)`;c.style.setProperty('--gx',x*100+'%');c.style.setProperty('--gy',y*100+'%')});c.addEventListener('mouseleave',()=>c.style.transform='')});
+  /* hero letters react to mouse */
+  const word=$('#word');
+  word.innerHTML=[...'CARTO'].map(c=>`<span class="ch">${c}</span>`).join('')+'<span class="xr">'+[...'XR'].map(c=>`<span class="ch">${c}</span>`).join('')+'</span>';
+  const chs=$$('.ch',word);
+  addEventListener('mousemove',e=>{if(scrollY>innerHeight)return;chs.forEach(c=>{const r=c.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2),d=Math.hypot(dx,dy),f=Math.max(0,1-d/320);c.style.transform=`translate(${-dx*f*.12}px,${-dy*f*.12}px) scale(${1+f*.06})`})});
+  /* twin parallax */
+  const ti=$('#twinimgs');ti&&ti.addEventListener('mousemove',e=>{const r=ti.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;$('.i1',ti).style.transform=`translate(${x*-24}px,${y*-24}px)`;$('.i2',ti).style.transform=`translate(${x*34}px,${y*34}px)`});
+}else{$$('.tilt,[data-magnetic]').forEach(e=>e.removeAttribute('data-magnetic'))}
+
+/* particle network */
+const cv=$('#net'),ctx=cv.getContext('2d');let dots=null,W,H,dpr=Math.min(devicePixelRatio||1,2),hm={x:-999,y:-999};
+function initNet(){W=cv.width=cv.offsetWidth*dpr;H=cv.height=cv.offsetHeight*dpr;const n=Math.min(110,Math.round(cv.offsetWidth/14));dots=Array.from({length:n},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.35*dpr,vy:(Math.random()-.5)*.35*dpr}))}
+initNet();addEventListener('resize',initNet);
+$('.hero').addEventListener('mousemove',e=>{const r=cv.getBoundingClientRect();hm.x=(e.clientX-r.left)*dpr;hm.y=(e.clientY-r.top)*dpr});
+$('.hero').addEventListener('mouseleave',()=>{hm.x=hm.y=-999});
+function draw(){
+  if(scrollY<innerHeight*1.1){
+    const cs=getComputedStyle(root),c=cs.getPropertyValue('--azure').trim()||'#008DA8';
+    ctx.clearRect(0,0,W,H);
+    for(const d of dots){
+      d.x+=d.vx;d.y+=d.vy;if(d.x<0||d.x>W)d.vx*=-1;if(d.y<0||d.y>H)d.vy*=-1;
+      const dx=d.x-hm.x,dy=d.y-hm.y,dd=Math.hypot(dx,dy);if(dd<160*dpr&&dd>0){d.x+=dx/dd*1.6;d.y+=dy/dd*1.6}
+      ctx.beginPath();ctx.arc(d.x,d.y,2*dpr,0,7);ctx.fillStyle=c;ctx.globalAlpha=.55;ctx.fill();
+    }
+    for(let i=0;i<dots.length;i++)for(let j=i+1;j<dots.length;j++){const a=dots[i],b=dots[j],d=Math.hypot(a.x-b.x,a.y-b.y);if(d<130*dpr){ctx.globalAlpha=(1-d/(130*dpr))*.3;ctx.strokeStyle=c;ctx.lineWidth=dpr;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()}}
+    for(const a of dots){const d=Math.hypot(a.x-hm.x,a.y-hm.y);if(d<200*dpr){ctx.globalAlpha=(1-d/(200*dpr))*.8;ctx.strokeStyle=c;ctx.lineWidth=1.5*dpr;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(hm.x,hm.y);ctx.stroke()}}
+    ctx.globalAlpha=1;
+  }
+  if(!reduce)requestAnimationFrame(draw)
+}
+draw();
+
+/* copy + form */
+$$('.copy').forEach(b=>b.onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(b.dataset.copy);const o=b.textContent;b.textContent='COPIED ✓';setTimeout(()=>b.textContent=o,1400)});
+$('#f').addEventListener('submit',e=>{e.preventDefault();const d=new FormData(e.target);
+  location.href='mailto:shylesh@cartoxr.com?subject='+encodeURIComponent('CARTOXR enquiry: '+d.get('int'))+'&body='+encodeURIComponent('Name: '+d.get('name')+'\nOrganisation: '+d.get('org')+'\nEmail: '+d.get('email')+'\nInterest: '+d.get('int')+'\n\n'+d.get('msg'))});
+})();
+</script>
 </body>
 </html>
